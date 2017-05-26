@@ -6,7 +6,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-Run `node server.js` for an API dev server. Navigate to `http://localhost:3000/`. The app will run from a node server to access MongoDB database and API routing.
+Run `node server.js` for an API dev node server. Navigate to `http://localhost:3000/`. The app will run from a node server to access MongoDB database and API routing.
 
 ## Code scaffolding
 

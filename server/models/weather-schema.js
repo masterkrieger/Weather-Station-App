@@ -1,3 +1,10 @@
+/*
+ * Author: Jeremy Barr
+ * Date: 26-May-2017
+ * Description: Mongoose Schema for the Weather API.
+ *
+*/
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
