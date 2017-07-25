@@ -9,8 +9,7 @@ import { WeatherService } from '../weather.service';
 export class WeatherComponent implements OnInit {
 
   weatherData: any = [];
-
-  constructor(private weatherService: WeatherService) { }
+  constructor(private weatherService: WeatherService) {}
 
   ngOnInit() {
     this.getWeather();
@@ -22,7 +21,7 @@ export class WeatherComponent implements OnInit {
     // Retreive posts from the API
     this.weatherService.getAllWeatherData()
       .subscribe( weatherData => {
-        this.weatherData = weatherData
+        this.weatherData = weatherData;
       });
   }
 
