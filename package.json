@@ -1,6 +1,6 @@
 {
   "name": "weather-station-app",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -20,8 +20,10 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
+    "@swimlane/ngx-charts": "^6.0.1",
     "body-parser": "^1.17.2",
     "core-js": "^2.4.1",
+    "d3": "^4.10.0",
     "express": "^4.15.3",
     "mongoose": "^4.10.2",
     "rxjs": "^5.1.0",

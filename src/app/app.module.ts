@@ -4,9 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
+// ngx-charts
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+// Weather Components
 import { AppComponent } from './app.component';
 import { WeatherComponent } from './weather/weather.component';
 
+// Services
 import { WeatherService } from './weather.service';
 
 // Define the routes
@@ -31,7 +37,9 @@ const ROUTES = [
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(ROUTES)
+    RouterModule.forRoot(ROUTES),
+    BrowserAnimationsModule,
+    NgxChartsModule
   ],
   providers: [WeatherService],
   bootstrap: [AppComponent]

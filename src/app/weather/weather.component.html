@@ -1,9 +1,15 @@
-<div class='container'>
-
-    <div class="card card-block">
-      <h4 class="card-title">{{ weatherData.name }}</h4>
-      <!--<div class="row" *ngFor="let data of weatherData.series">-->
-      <p class="card-text">{{ weatherData.series | json }}</p>
-    </div>
-  </div>
-</div>
+<ngx-charts-line-chart
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="weatherData"
+  [gradient]="gradient"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="showLegend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [autoScale]="autoScale"
+  (select)="onSelect($event)">
+</ngx-charts-line-chart>

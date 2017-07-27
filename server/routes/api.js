@@ -14,7 +14,9 @@ const mongoose = require('mongoose');
 const Weather = require('../models/weather-schema');
 
 const API = 'mongodb://localhost:27017/weatherdb';
-mongoose.connect('mongodb://localhost:27017/weatherdb');
+mongoose.connect('mongodb://localhost:27017/weatherdb', {
+  useMongoClient: true,
+});
 
 /* Get api listening */
 router.get('/', (req, res) => {
@@ -28,23 +30,20 @@ router.get('/weather', (req, res) => {
     if (err)
       res.send(err);
 
-    let series = weatherData.map( data => {
+    let ngxData = weatherData.map( data => {
       return {
         'name': data.timestamp,
         'value': data.tempf
       };
     });
 
-    let ngxData = {
-      'name': 'TempF',
-      'series': series
-    }
-
-
     //console.log(typeof weatherData);
     //console.log(weatherData);
 
-    res.json(ngxData);
+    res.json([{
+      'name': 'TempF',
+      'series': ngxData
+    }]);
   });
 });
 
