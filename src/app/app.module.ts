@@ -11,9 +11,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Weather Components
 import { AppComponent } from './app.component';
 import { WeatherComponent } from './weather/weather.component';
+import { TimeScaleComponent } from './time-scale/time-scale.component';
 
 // Services
 import { WeatherService } from './weather.service';
+import { TimeScaleService } from './time-scale.service';
 
 // Define the routes
 const ROUTES = [
@@ -31,7 +33,8 @@ const ROUTES = [
 @NgModule({
   declarations: [
     AppComponent,
-    WeatherComponent
+    WeatherComponent,
+    TimeScaleComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +44,7 @@ const ROUTES = [
     BrowserAnimationsModule,
     NgxChartsModule
   ],
-  providers: [WeatherService],
+  providers: [WeatherService, TimeScaleService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

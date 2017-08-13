@@ -10,21 +10,38 @@ import { WeatherService } from '../weather.service';
 })
 export class WeatherComponent implements OnInit {
 
+  // Initialize data variables
   weatherData: any = [];
+  errorMessage: any;
 
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getWeather();
-    console.log(this.weatherData);
+    this.getNWeather(5);
   }
 
   getWeather(): void {
     // Retreive posts from the API
     this.weatherService.getAllWeatherData()
       .subscribe(
-        weatherData => this.weatherData = weatherData//,
-        //error => this.errorMessage = <any>error
+        weatherData => this.weatherData = weatherData,
+        error => this.errorMessage = <any>error
+      );
+  }
+
+  /*
+    Description: Function to retrieve a limited number of data points from service.
+    Input: 'limit' - number amount of last data points
+
+    Time-Scale component emits dropdown option value to Weather component.
+    Then calls function when dropdown option is selected.
+  */
+  getNWeather(limit: number): void {
+    // Retreive weather data from the API
+    this.weatherService.getNWeatherData(limit)
+      .subscribe(
+        weatherData => this.weatherData = weatherData,
+        error => this.errorMessage = <any>error
       );
   }
 

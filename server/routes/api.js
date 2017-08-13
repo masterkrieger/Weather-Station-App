@@ -23,7 +23,10 @@ router.get('/', (req, res) => {
   res.send('api works');
 });
 
-// Get all weather data
+/******************************
+ Description: Get ALL weather data points
+ Warning: May be a large dataset!
+******************************/
 router.get('/weather', (req, res) => {
   // Get weather data from the Database
   Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
@@ -37,14 +40,37 @@ router.get('/weather', (req, res) => {
       };
     });
 
-    //console.log(typeof weatherData);
-    //console.log(weatherData);
-
-    res.json([{
-      'name': 'TempF',
-      'series': ngxData
-    }]);
+    res.json( [{ 'name': 'TempF', 'series': ngxData }] );
   });
 });
+
+/******************************
+ Get last 'n' weather data points
+******************************/
+router.param(['limit'], function (req, res, next, limit) {
+  console.log('limit = ', limit);
+  next();
+});
+
+router.get('/weather/:limit', (req, res) => {
+  // Get weather data from the Database
+  Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
+    if (err)
+      res.send(err);
+
+    let ngxData = weatherData.sort().map( data => {
+      return {
+        'name': data.timestamp,
+        'value': data.tempf
+      };
+    });
+
+    // send response in json format.
+    res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+
+    // Limit to 'n' results and '+' converts string to number.
+  }).limit(+req.params.limit).sort('-timestamp');
+});
+
 
 module.exports = router;
