@@ -17,8 +17,13 @@ export class WeatherService {
                     .catch(this.handleError);
   };
 
-  getNWeatherData(limit: number): Observable<any[]> {
-    return this.http.get('/api/weather/' + limit)
+  /*
+    Description: Function to retrieve a limited number of data points of a specfic dataset.
+    Input: 'limit' - number amount of last data points
+    Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
+  */
+  getWeatherData(dataset: string, limit: number): Observable<any[]> {
+    return this.http.get('/api/weather/' + dataset + '/' + limit)
                     .map(res => res.json())
                     .catch(this.handleError);
   };

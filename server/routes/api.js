@@ -18,15 +18,56 @@ mongoose.connect('mongodb://localhost:27017/weatherdb', {
   useMongoClient: true,
 });
 
+/******************************
+ POST Requests
+******************************/
+router.post('/input', (req, res) => {
+
+  // add the current timesstamp with the javascript Date() function
+  req.body.timestamp = new Date();
+
+  console.log(req.body);
+
+  Weather.create(req.body, (err, post) => {
+    
+    if (err) return handleError(err)
+    
+    res.json(req.body);
+  })
+
+  //res.send(req.body);
+});
+
+/******************************
+ Router Params
+******************************/
+
+router.param('dataset', function (req, res, next, dataset) {
+  // Fetch the dataset from a database
+  req.dataset = dataset;
+
+  console.log('dataset = ', req.dataset);
+  next();
+});
+
+router.param('limit', function (req, res, next, limit) {
+  // Fetch the limited number of data entries (limit) from a database
+  req.limit = limit;
+  console.log('limit = ', req.limit);
+  next();
+});
+
+/******************************
+ GET Requests
+******************************/
+
 /* Get api listening */
 router.get('/', (req, res) => {
   res.send('api works');
 });
 
-/******************************
- Description: Get ALL weather data points
- Warning: May be a large dataset!
-******************************/
+
+// Get ALL weather data points
 router.get('/weather', (req, res) => {
   // Get weather data from the Database
   Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
@@ -44,33 +85,28 @@ router.get('/weather', (req, res) => {
   });
 });
 
-/******************************
- Get last 'n' weather data points
-******************************/
-router.param(['limit'], function (req, res, next, limit) {
-  console.log('limit = ', limit);
-  next();
-});
+// Get the specified weather dataset and last number of entries.
+router.get('/weather/:dataset/:limit', (req, res) => {
 
-router.get('/weather/:limit', (req, res) => {
   // Get weather data from the Database
-  Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
+  Weather.find({}, 'timestamp ' + req.dataset +' -_id', (err, weatherData) => {
     if (err)
       res.send(err);
 
+    // sorts on most recent entries
     let ngxData = weatherData.sort().map( data => {
       return {
         'name': data.timestamp,
-        'value': data.tempf
+        'value': data[req.dataset]
       };
     });
 
     // send response in json format.
-    res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+    res.json( [{ 'name': req.dataset, 'series': ngxData }] );
 
-    // Limit to 'n' results and '+' converts string to number.
-  }).limit(+req.params.limit).sort('-timestamp');
+    // Limit to number of results and '+' converts string to number.
+    // Sorts the results by the 'timestamp' key in decending order
+  }).limit(+req.limit).sort('-timestamp');
 });
-
 
 module.exports = router;

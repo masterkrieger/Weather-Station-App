@@ -17,10 +17,10 @@ export class WeatherComponent implements OnInit {
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getNWeather(5);
+    this.getWeather("tempf", 5);
   }
 
-  getWeather(): void {
+  getAllWeather(): void {
     // Retreive posts from the API
     this.weatherService.getAllWeatherData()
       .subscribe(
@@ -30,15 +30,16 @@ export class WeatherComponent implements OnInit {
   }
 
   /*
-    Description: Function to retrieve a limited number of data points from service.
+    Description: Function to retrieve a limited number of data points of a specific dataset from service.
     Input: 'limit' - number amount of last data points
+    Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
 
-    Time-Scale component emits dropdown option value to Weather component.
+    Time-Scale component emits a number value and string describing dataset to Weather component.
     Then calls function when dropdown option is selected.
   */
-  getNWeather(limit: number): void {
+  getWeather(dataset: string, limit: number): void {
     // Retreive weather data from the API
-    this.weatherService.getNWeatherData(limit)
+    this.weatherService.getWeatherData(dataset,limit)
       .subscribe(
         weatherData => this.weatherData = weatherData,
         error => this.errorMessage = <any>error
