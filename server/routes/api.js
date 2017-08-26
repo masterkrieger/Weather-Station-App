@@ -76,7 +76,7 @@ router.get('/weather', (req, res) => {
 
     let ngxData = weatherData.map( data => {
       return {
-        'name': data.timestamp,
+        'name': new Date(data.timestamp),
         'value': data.tempf
       };
     });

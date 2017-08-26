@@ -19,6 +19,17 @@ export class TimeScaleComponent implements OnInit {
       {key: 'Month', value: '20'}
     ];
 
+   @Input() dataset = 
+   [
+     { key: 'Altitude Ft', value: 'altitude_ft'},
+     { key: 'Altitude M', value: 'altitude_m'},
+     { key: 'Temp C', value: 'tempc'},
+     { key: 'tempf', value: 'tempf'},
+     { key: 'humidity', value: 'humidity'},
+     { key: 'pressure', value: 'pressure'},
+     { key: 'time', value: 'time'}
+  ]
+
   @Output() select: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private timeScaleService: TimeScaleService) {}
@@ -33,6 +44,7 @@ export class TimeScaleComponent implements OnInit {
 
   // Emit dropdown value to the parent component (Weather Component)
   selectItem(value:string) {
+    // TODO: change 'value' to object/value to include the dataset {'tempf', value}
     this.select.emit(value);
     console.log(value);
   }

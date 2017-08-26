@@ -10,7 +10,7 @@ var Schema = mongoose.Schema;
 
 var WeatherSchema = new Schema({
   station_id: String,
-  timestamp: String,
+  timestamp: Date,
   altitude_ft: String,
   altitude_m: String,
   humidity: String,

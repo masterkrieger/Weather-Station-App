@@ -38,6 +38,7 @@ export class WeatherComponent implements OnInit {
     Then calls function when dropdown option is selected.
   */
   getWeather(dataset: string, limit: number): void {
+    console.log(dataset, limit);
     // Retreive weather data from the API
     this.weatherService.getWeatherData(dataset,limit)
       .subscribe(
