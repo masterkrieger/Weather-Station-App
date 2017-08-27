@@ -22,8 +22,8 @@ export class WeatherService {
     Input: 'limit' - number amount of last data points
     Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
   */
-  getWeatherData(dataset: string, limit: number): Observable<any[]> {
-    return this.http.get('/api/weather/' + dataset + '/' + limit)
+  getWeatherData(sensor: string, timeScale: string): Observable<any[]> {
+    return this.http.get('/api/weather/' + sensor + '/' + timeScale)
                     .map(res => res.json())
                     .catch(this.handleError);
   };

@@ -17,7 +17,7 @@ export class WeatherComponent implements OnInit {
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getWeather({sensorValue:'tempf', scaleValue: 5});
+    this.getWeather({sensorValue:'tempf', scaleValue: "24hr"});
   }
 
   getAllWeather(): void {
