@@ -17,7 +17,7 @@ export class WeatherComponent implements OnInit {
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getWeather("tempf", 5);
+    this.getWeather({sensorValue:'tempf', scaleValue: 5});
   }
 
   getAllWeather(): void {
@@ -37,10 +37,10 @@ export class WeatherComponent implements OnInit {
     Time-Scale component emits a number value and string describing dataset to Weather component.
     Then calls function when dropdown option is selected.
   */
-  getWeather(dataset: string, limit: number): void {
-    console.log(dataset, limit);
+  getWeather(event:any): void {
+    console.log(event);
     // Retreive weather data from the API
-    this.weatherService.getWeatherData(dataset,limit)
+    this.weatherService.getWeatherData(event.sensorValue, event.scaleValue)
       .subscribe(
         weatherData => this.weatherData = weatherData,
         error => this.errorMessage = <any>error
