@@ -13,18 +13,18 @@ export class TimeScaleComponent implements OnInit {
 // TODO: add TimeScaleValue class to the 'options' Input value.
   @Input() timeScale =
     [
-      {key: 'Today', value: '5'},
-      {key: '24hr',  value: '10'},
-      {key: 'Week',  value: '15'},
-      {key: 'Month', value: '20'}
+      {key: '24hr', value: '24hr'},
+      {key: 'Week',  value: 'week'},
+      {key: 'Month', value: 'month'},
+      {key: 'Year', value: 'year'}
     ];
 
    @Input() sensorData = 
    [
      { key: 'Temp F', value: 'tempf'},
      { key: 'Temp C', value: 'tempc'}, 
-     { key: 'Altitude Ft', value: 'altitude_ft'},
-     { key: 'Altitude M', value: 'altitude_m'},
+     { key: 'Altitude (Ft)', value: 'altitude_ft'},
+     { key: 'Altitude (M', value: 'altitude_m'},
      { key: 'Humidity %RH', value: 'humidity'},
      { key: 'Pressure Pa', value: 'pressure'},
      { key: 'Uptime sec', value: 'time'}
