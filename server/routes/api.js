@@ -21,10 +21,10 @@ mongoose.connect('mongodb://localhost:27017/weatherdb', {
 /******************************
  POST Requests
 ******************************/
-router.post('/input', (req, res) => {
+router.post('/weather', (req, res) => {
 
   // add the current timesstamp with the javascript Date() function
-  req.body.timestamp = new Date();
+  req.body.timestamp = new Date().toISOString();
 
   console.log(req.body);
 
@@ -34,28 +34,55 @@ router.post('/input', (req, res) => {
     
     res.json(req.body);
   })
-
-  //res.send(req.body);
 });
 
 /******************************
  Router Params
 ******************************/
 
-router.param('dataset', function (req, res, next, dataset) {
-  // Fetch the dataset from a database
-  req.dataset = dataset;
-
-  console.log('dataset = ', req.dataset);
+router.param('sensor', function (req, res, next, sensor) {
+  // Fetch the sensor from a database
+  req.sensor = sensor;
+  console.log('sensor = ', req.sensor);
   next();
 });
 
+router.param('timeScale', function (req, res, next, timeScale) {
+  // Set current time/date
+  var now = new Date();
+
+  switch (timeScale) {
+    case "24hr":
+      // last 24 hrs from now
+      req.timeScale = new Date(now.setHours(now.getHours()- 24)).toISOString();
+      break;
+    case "week":
+      // last 7 days from now
+      req.timeScale = new Date(now.setDate(now.getDate() - 7)).toISOString();
+      break;
+    case "month":
+      // last Month from now
+      req.timeScale = new Date(now.setMonth(now.getMonth() - 1)).toISOString();
+      break;
+    case "year":
+      // last Year from now
+      req.timeScale = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString();
+      break;
+  }
+
+  // Fetch the timeScale from a database
+  console.log('timeScale = ', timeScale, req.timeScale);
+  next();
+});
+
+/*
 router.param('limit', function (req, res, next, limit) {
   // Fetch the limited number of data entries (limit) from a database
   req.limit = limit;
   console.log('limit = ', req.limit);
   next();
 });
+*/
 
 /******************************
  GET Requests
@@ -69,6 +96,8 @@ router.get('/', (req, res) => {
 
 // Get ALL weather data points
 router.get('/weather', (req, res) => {
+  var now = new Date();
+  console.log(new Date(now.setDate(now.getDate() - 7)).toISOString());
   // Get weather data from the Database
   Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
     if (err)
@@ -85,11 +114,11 @@ router.get('/weather', (req, res) => {
   });
 });
 
-// Get the specified weather dataset and last number of entries.
-router.get('/weather/:dataset/:limit', (req, res) => {
+// Get the specified weather sensor and last number of entries.
+router.get('/weather/:sensor/:timeScale', (req, res) => {
 
   // Get weather data from the Database
-  Weather.find({}, 'timestamp ' + req.dataset +' -_id', (err, weatherData) => {
+  Weather.find({}, 'timestamp ' + req.sensor +' -_id', (err, weatherData) => {
     if (err)
       res.send(err);
 
@@ -97,16 +126,16 @@ router.get('/weather/:dataset/:limit', (req, res) => {
     let ngxData = weatherData.sort().map( data => {
       return {
         'name': data.timestamp,
-        'value': data[req.dataset]
+        'value': data[req.sensor]
       };
     });
 
     // send response in json format.
-    res.json( [{ 'name': req.dataset, 'series': ngxData }] );
+    res.json( [{ 'name': req.sensor, 'series': ngxData }] );
 
     // Limit to number of results and '+' converts string to number.
     // Sorts the results by the 'timestamp' key in decending order
-  }).limit(+req.limit).sort('-timestamp');
+  }).where('timestamp').gte(req.timeScale).sort('-timestamp');
 });
 
 module.exports = router;
