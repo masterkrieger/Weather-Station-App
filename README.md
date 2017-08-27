@@ -1,6 +1,13 @@
 # Weather-Station-App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.3.
+## Installation
+
+In the Weather-Station-App installation folder, run:
+
+~~~
+npm install
+~~~ 
+
 
 ## Development server
 
