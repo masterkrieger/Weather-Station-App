@@ -17,7 +17,8 @@ export class WeatherComponent implements OnInit {
   constructor(private weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    this.getWeather({sensorValue:'tempf', scaleValue: "24hr"});
+    var now = new Date();
+    this.getWeather({sensorValue:'tempf', scaleValue: new Date(now.setHours(now.getHours()- 24)).toISOString()});
   }
 
   getAllWeather(): void {
@@ -47,9 +48,9 @@ export class WeatherComponent implements OnInit {
       );
   }
 
-  /***
+  /*********************
     Line-Chart settings
-  ***/
+  *********************/
 
   view: any[] = [900, 400];
 
