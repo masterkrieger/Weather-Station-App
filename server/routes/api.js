@@ -23,7 +23,7 @@ mongoose.connect('mongodb://localhost:27017/weatherdb', {
 ******************************/
 router.post('/weather', (req, res) => {
 
-  // add the current timesstamp with the javascript Date() function
+  // add the current timestamp with the javascript Date() function
   req.body.timestamp = new Date().toISOString();
 
   console.log(req.body);
@@ -48,11 +48,11 @@ router.param('sensor', function (req, res, next, sensor) {
 });
 
 router.param('timeScale', function (req, res, next, timeScale) {
-  // Set current time/date
   var now = new Date();
-
+  
+  // if the param is not a date string, then assign a date string.
   switch (timeScale) {
-    case "24hr":
+    case "day":
       // last 24 hrs from now
       req.timeScale = new Date(now.setHours(now.getHours()- 24)).toISOString();
       break;
@@ -68,10 +68,13 @@ router.param('timeScale', function (req, res, next, timeScale) {
       // last Year from now
       req.timeScale = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString();
       break;
+    default:
+      // Assign param to the request
+      req.timeScale = timeScale;
   }
 
   // Fetch the timeScale from a database
-  console.log('timeScale = ', timeScale, req.timeScale);
+  console.log('timeScale = ', req.timeScale);
   next();
 });
 
@@ -96,8 +99,6 @@ router.get('/', (req, res) => {
 
 // Get ALL weather data points
 router.get('/weather', (req, res) => {
-  var now = new Date();
-  console.log(new Date(now.setDate(now.getDate() - 7)).toISOString());
   // Get weather data from the Database
   Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
     if (err)
@@ -105,13 +106,13 @@ router.get('/weather', (req, res) => {
 
     let ngxData = weatherData.map( data => {
       return {
-        'name': new Date(data.timestamp),
+        'name': data.timestamp,
         'value': data.tempf
       };
     });
 
     res.json( [{ 'name': 'TempF', 'series': ngxData }] );
-  });
+  }).sort('-timestamp');
 });
 
 // Get the specified weather sensor and last number of entries.
@@ -122,20 +123,56 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
     if (err)
       res.send(err);
 
-    // sorts on most recent entries
-    let ngxData = weatherData.sort().map( data => {
-      return {
-        'name': data.timestamp,
-        'value': data[req.sensor]
-      };
-    });
+    // sort weather on timestamp in ascending order
+    /*weatherData.sort((a,b) =>{
+        var timeA = a.timestamp;
+        var timeB = b.timestamp;
+
+        let comparison = 0;
+        if(timeA > timeB) {
+          comparison = 1;
+        } else if (timeA < timeB) {
+          comparison = -1;
+        }
+        return timeA - timeB;
+    });*/
+    let ngxData = {};
+    if (Object.keys(weatherData).length > 0) {
+      // sorts on most recent entries
+       ngxData = weatherData.sort((a,b) =>{
+          return a.timestamp - b.timestamp;
+      }).map( data => {
+        var now = new Date(data.timestamp);
+        var month = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        var timestamp = now; // default to now
+
+        /*
+        if (req.timeScale != "24hr") 
+          timestamp = now.getHours() + ":" + now.getMinutes() + " " + month[now.getMonth()] + "-" + now.getDate();
+        else {
+          timestamp = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+        }
+        */
+        
+        return {
+          'name': data.timestamp,
+          'value': data[req.sensor]
+        };
+      });
+    } else {
+        ngxData = {
+          'name': "null",
+          'value': "0.0"
+        }
+    }
+
 
     // send response in json format.
     res.json( [{ 'name': req.sensor, 'series': ngxData }] );
 
     // Limit to number of results and '+' converts string to number.
     // Sorts the results by the 'timestamp' key in decending order
-  }).where('timestamp').gte(req.timeScale).sort('-timestamp');
+  }).sort('-timestamp').where('timestamp').gte(req.timeScale);
 });
 
 module.exports = router;

@@ -22,12 +22,13 @@ export class WeatherService {
     Input: 'limit' - number amount of last data points
     Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
   */
-  getWeatherData(sensor: string, timeScale: string): Observable<any[]> {
-    return this.http.get('/api/weather/' + sensor + '/' + timeScale)
+  getWeatherData(sensor: string, scale: string): Observable<any[]> {
+    return this.http.get('/api/weather/' + sensor + '/' + scale)
                     .map(res => res.json())
                     .catch(this.handleError);
   };
 
+  // Handle Error Response
   private handleError(error: Response | any) {
     // In a real world app, might use a remote loggin infrastructure
     let errMsg: string;
