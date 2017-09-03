@@ -10,44 +10,75 @@ import { TimeScaleValue } from './time-scale-value'
   styleUrls: ['./time-scale.component.css']
 })
 export class TimeScaleComponent implements OnInit {
-// TODO: add TimeScaleValue class to the 'options' Input value.
-  @Input() timeScale = [];
 
-   @Input() sensorData = 
-   [
-     { key: 'Temp F', value: 'tempf'},
-     { key: 'Temp C', value: 'tempc'}, 
-     { key: 'Altitude Ft', value: 'altitude_ft'},
-     { key: 'Altitude M', value: 'altitude_m'},
-     { key: 'Humidity %RH', value: 'humidity'},
-     { key: 'Pressure Pa', value: 'pressure'},
-     { key: 'Uptime sec', value: 'time'}
-    ]
+  @Input() timeScale = 
+  [
+    {key: 'Day',   value: 'day'},
+    {key: 'Week',  value: 'week'},
+    {key: 'Month', value: 'month'},
+    {key: 'Year',  value: 'year'}
+  ];
+
+  @Input() sensorData = 
+  [
+    { key: 'Temp F', value: 'tempf'},
+    { key: 'Temp C', value: 'tempc'}, 
+    { key: 'Altitude Ft', value: 'altitude_ft'},
+    { key: 'Altitude M', value: 'altitude_m'},
+    { key: 'Humidity %RH', value: 'humidity'},
+    { key: 'Pressure Pa', value: 'pressure'},
+    { key: 'Uptime sec', value: 'time'}
+  ]
 
   @Output() select: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private timeScaleService: TimeScaleService) {}
 
+  /* Initialize variables */
   timeScaleTitle = 'Time Scale';
-  now = new Date();
-  scale = new Date(new Date().setHours(this.now.getHours()- 24)).toISOString();
-  sensor = this.sensorData[0].value;
+  now:Date;
+  scale:string;
+  sensor:string;
 
   ngOnInit() {
-    //this.options = this.timeScaleService.getTimeScaleOptions();
-    this.timeScale = [
-      {key: 'Day',   value: new Date(new Date().setHours(this.now.getHours()- 24)).toISOString()},
-      {key: 'Week',  value: new Date(new Date().setDate(this.now.getDate() - 7)).toISOString()},
-      {key: 'Month', value: new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString()},
-      {key: 'Year',  value: new Date(new Date().setFullYear(this.now.getFullYear() - 1)).toISOString()}
-    ]
+
+    // Set default values to scale and sensor on Initialization
+    this.scale = this.setTimeScaleValues("Day");
+    this.sensor = this.sensorData[0].value;
     console.log(this.timeScale);
     console.log(this.sensorData);
   }
 
+  setTimeScaleValues(timeScaleValue:string):string {
+    this.now = new Date();
+    var timeQuery:string;
+    switch (timeScaleValue) {
+      case "day":
+        // last 24 hrs from now
+        timeQuery = new Date(new Date().setHours(this.now.getHours()- 24)).toISOString();
+        break;
+      case "week":
+        // last 7 days from now
+        timeQuery = new Date(new Date().setDate(this.now.getDate() - 7)).toISOString();
+        break;
+      case "month":
+        // last Month from now
+        timeQuery = new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString();
+        break;
+      case "year":
+        // last Year from now
+        timeQuery = new Date(new Date().setFullYear(this.now.getFullYear() - 1)).toISOString();
+        break;
+      default:
+        // Assign param to the request
+        timeQuery = new Date(this.now).toISOString();
+    }
+    return timeQuery;//this.timeScale[timeScaleKey].value;
+  }
+
   // Function called when Time Scale button is selected
   selectTimeScale(timeScaleValue:string) {
-    this.scale = timeScaleValue;
+    this.scale = this.setTimeScaleValues(timeScaleValue);
     this.emitValues(this.sensor, this.scale);
     console.log(this.scale);
   }

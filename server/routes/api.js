@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 const Weather = require('../models/weather-schema');
 
 const API = 'mongodb://localhost:27017/weatherdb';
-mongoose.connect('mongodb://localhost:27017/weatherdb', {
+mongoose.connect(API, {
   useMongoClient: true,
 });
 
@@ -122,40 +122,24 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
   Weather.find({}, 'timestamp ' + req.sensor +' -_id', (err, weatherData) => {
     if (err)
       res.send(err);
-
-    // sort weather on timestamp in ascending order
-    /*weatherData.sort((a,b) =>{
-        var timeA = a.timestamp;
-        var timeB = b.timestamp;
-
-        let comparison = 0;
-        if(timeA > timeB) {
-          comparison = 1;
-        } else if (timeA < timeB) {
-          comparison = -1;
-        }
-        return timeA - timeB;
-    });*/
+    
     let ngxData = {};
+
+    // if Weather.find() returns an empty object, then return an Object with some name/value 
     if (Object.keys(weatherData).length > 0) {
       // sorts on most recent entries
        ngxData = weatherData.sort((a,b) =>{
+          // sort weather on timestamp in ascending order
           return a.timestamp - b.timestamp;
       }).map( data => {
         var now = new Date(data.timestamp);
         var month = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-        var timestamp = now; // default to now
-
-        /*
-        if (req.timeScale != "24hr") 
-          timestamp = now.getHours() + ":" + now.getMinutes() + " " + month[now.getMonth()] + "-" + now.getDate();
-        else {
-          timestamp = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-        }
-        */
         
+        // Readable format timestamp in local time
+        var timestamp = now.getHours() + ":" + now.getMinutes() + " " + month[now.getMonth()] + "-" + now.getDate();
+
         return {
-          'name': data.timestamp,
+          'name': timestamp,
           'value': data[req.sensor]
         };
       });
