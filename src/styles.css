@@ -1,1 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+/* -------------------------------------  */
+/* WEATHER STATION STYLE SHEET */
+/* -------------------------------------  */
+
+/*
+font white-ish:     #FFEFD7
+Orange color :      #F0B662
+45% Dark Orange :   #d88815 #CF923B
+*/
+
+/* -------------------------------------  */
+/* BASIC SETUP */
+/* -------------------------------------  */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    background-color: #F2F2F2;
+    color: #555;
+    font-family: 'Lato', 'Arial', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    overflow-x: hidden;
+}
+/* -------------------------------------  */
+/* REUSABLE COMPONENTS */
+/* -------------------------------------  */
+
+.row {
+    max-width: 1140px;
+    margin: 0px auto; /* centered */
+}

@@ -78,15 +78,6 @@ router.param('timeScale', function (req, res, next, timeScale) {
   next();
 });
 
-/*
-router.param('limit', function (req, res, next, limit) {
-  // Fetch the limited number of data entries (limit) from a database
-  req.limit = limit;
-  console.log('limit = ', req.limit);
-  next();
-});
-*/
-
 /******************************
  GET Requests
 ******************************/
@@ -134,9 +125,15 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
       }).map( data => {
         var now = new Date(data.timestamp);
         var month = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-        
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var day = now.getDate();
+
+        if (hours<10) hours = '0' + hours;
+        if (minutes<10) minutes = '0' + minutes;
+        if (day<10) day = '0' + day;
         // Readable format timestamp in local time
-        var timestamp = now.getHours() + ":" + now.getMinutes() + " " + month[now.getMonth()] + "-" + now.getDate();
+        var timestamp = hours + ":" + minutes + " " + month[now.getMonth()-1] + "-" + day;
 
         return {
           'name': timestamp,

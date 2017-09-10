@@ -1,17 +1,21 @@
-<app-time-scale (select)="getWeather($event)"></app-time-scale>
+<div class="weatheroptions">
+  <app-time-scale (select)="getWeather($event)"></app-time-scale>
+</div>
 
-<ngx-charts-line-chart
-  [view]="view"
-  [scheme]="colorScheme"
-  [results]="weatherData"
-  [gradient]="gradient"
-  [xAxis]="showXAxis"
-  [yAxis]="showYAxis"
-  [legend]="showLegend"
-  [showXAxisLabel]="showXAxisLabel"
-  [showYAxisLabel]="showYAxisLabel"
-  [xAxisLabel]="xAxisLabel"
-  [yAxisLabel]="yAxisLabel"
-  [autoScale]="autoScale"
-  (select)="onSelect($event)">
-</ngx-charts-line-chart>
+<div class="weatherchart">
+  <ngx-charts-line-chart
+    [view]="view"
+    [scheme]="colorScheme"
+    [results]="weatherData"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [autoScale]="autoScale"
+    (select)="onSelect($event)">
+  </ngx-charts-line-chart>
+</div>

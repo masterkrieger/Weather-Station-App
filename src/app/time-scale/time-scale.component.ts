@@ -23,8 +23,8 @@ export class TimeScaleComponent implements OnInit {
   [
     { key: 'Temp F', value: 'tempf'},
     { key: 'Temp C', value: 'tempc'}, 
-    { key: 'Altitude Ft', value: 'altitude_ft'},
-    { key: 'Altitude M', value: 'altitude_m'},
+    //{ key: 'Altitude Ft', value: 'altitude_ft'},
+    //{ key: 'Altitude M', value: 'altitude_m'},
     { key: 'Humidity %RH', value: 'humidity'},
     { key: 'Pressure Pa', value: 'pressure'},
     { key: 'Uptime sec', value: 'time'}

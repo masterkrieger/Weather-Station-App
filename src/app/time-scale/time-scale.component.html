@@ -1,7 +1,6 @@
-<h4>{{timeScaleTitle}}</h4>
-<div class="row">
+<div class="row timescale">
   <button class="btn btn-secondary" *ngFor="let time of timeScale" (click)="selectTimeScale(time.value)">{{time.key}}</button>
 </div>
-<div class="row">
+<div class="row sensor">
   <button class="btn btn-secondary" *ngFor="let data of sensorData" (click)="selectSensor(data.value)">{{data.key}}</button>
 </div>
