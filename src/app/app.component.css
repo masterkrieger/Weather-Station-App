@@ -5,25 +5,32 @@ h2,
 h3 {
     font-weight: 300;
     text-transform: uppercase;
-    color: #42A17F;
+    color: #5AA454; /* #5aa454 #42A17F  #49B58F */
 }
 
 h1 {
     margin-top: 0;
     margin-bottom: 20px;
     text-align: center;
-    /*color: #fff;*/
     font-size: 250%; /* % of html font-size */
     word-spacing: 4px;
     letter-spacing: 1px;
 }
 
 .hero-text-box {
-    text-align: center;
+    background: #FFF;
+    background-attachment: fixed;
+    position: relative;             /* used for mountains, ground and cloud positions */
+    z-index: 0; 
+
     text-shadow: 2px 2px #b4b4b4;
-    /*position: absolute;*/
-    width: 1140px;
-    /*top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);*/
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.weather-section {
+    background: linear-gradient(#6B92B8, #fff);
+    background-size: cover;
+    background-position: center;
+    padding: 20px 0;
 }

@@ -8,11 +8,11 @@
 .weatherchart {
 	background-color: #FFF;
 	padding-bottom: 30px;
-	margin: 10px 5%; /* centered */
+	margin: 10px auto; /* centered */
 	display: block;
 	border: 1px solid #C1C1C1;;
     border-radius: 10px;
-    /*box-shadow: 2px 2px 2px #b4b4b4;*/
+    box-shadow: 2px 2px 2px #b4b4b4;
     height: 425px;
     width: 900px;
 }
