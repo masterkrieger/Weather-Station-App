@@ -47,6 +47,9 @@ export class TimeScaleComponent implements OnInit {
     this.sensor = this.sensorData[0].value;
     console.log(this.timeScale);
     console.log(this.sensorData);
+
+    // emits default timeScale values on Initialization.
+    this.emitValues(this.sensor, this.scale);  
   }
 
   setTimeScaleValues(timeScaleValue:string):string {

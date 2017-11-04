@@ -18,7 +18,6 @@ export class WeatherComponent implements OnInit {
 
   ngOnInit(): void {
     var now = new Date();
-    this.getWeather({sensorValue:'tempf', scaleValue: new Date(now.setHours(now.getHours()- 24)).toISOString()});
   }
 
   getAllWeather(): void {
