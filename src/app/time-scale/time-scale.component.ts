@@ -43,7 +43,7 @@ export class TimeScaleComponent implements OnInit {
   ngOnInit() {
 
     // Set default values to scale and sensor on Initialization
-    this.scale = this.setTimeScaleValues("Day");
+    this.scale = this.setTimeScaleValues("day");
     this.sensor = this.sensorData[0].value;
     console.log(this.timeScale);
     console.log(this.sensorData);
