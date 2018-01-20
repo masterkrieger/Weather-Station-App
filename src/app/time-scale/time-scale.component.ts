@@ -1,6 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { WeatherService } from '../weather.service';
-import { TimeScaleService } from '../time-scale.service';
 
 import { TimeScaleValue } from './time-scale-value'
 
@@ -23,16 +22,12 @@ export class TimeScaleComponent implements OnInit {
   [
     { key: 'Temp F', value: 'tempf'},
     { key: 'Temp C', value: 'tempc'}, 
-    //{ key: 'Altitude Ft', value: 'altitude_ft'},
-    //{ key: 'Altitude M', value: 'altitude_m'},
     { key: 'Humidity %RH', value: 'humidity'},
     { key: 'Pressure Pa', value: 'pressure'},
     { key: 'Uptime sec', value: 'time'}
   ]
 
   @Output() select: EventEmitter<any> = new EventEmitter<any>();
-
-  constructor(private timeScaleService: TimeScaleService) {}
 
   /* Initialize variables */
   timeScaleTitle = 'Time Scale';

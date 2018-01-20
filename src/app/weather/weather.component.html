@@ -2,8 +2,8 @@
   <app-time-scale (select)="getWeather($event)"></app-time-scale>
 </div>
 
-<div class="weatherchart">
-  <ngx-charts-line-chart
+<div #weatherchart class="weatherchart">
+  <ngx-charts-line-chart (window:resize)="onResize($event)"
     [view]="view"
     [scheme]="colorScheme"
     [results]="weatherData"
