@@ -10,8 +10,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server": "pm2 start server.js --watch --name weatherserver",
-    "mongo": "mongod --fork --logpath /var/log/mongod.log",
-    "dev": "npm run mongo | npm run server"
+    "database": "sudo mongod --fork --logpath /var/log/mongod.log",
+    "dev": "npm run database | npm run server"
   },
   "private": true,
   "dependencies": {

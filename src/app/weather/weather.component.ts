@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, OnInit, ViewChild, ElementRef } from '@angular/core';
-//import {trigger, state, style, animate, transition } from '@angular/animations';
+// import {trigger, state, style, animate, transition } from '@angular/animations';
 
 import { WeatherService } from '../weather.service';
 
@@ -15,7 +15,7 @@ export class WeatherComponent implements AfterViewInit {
   // Initialize data variables
   weatherData: any = [];
   errorMessage: any;
-  
+
   weatherChartViewHeight = 300;
   weatherChartViewWidth = 900;
   view: any[] = [this.weatherChartViewWidth, this.weatherChartViewHeight];
@@ -24,14 +24,14 @@ export class WeatherComponent implements AfterViewInit {
   constructor(private weatherService: WeatherService) {}
 
   ngAfterViewInit(): void {
-    //var now = new Date();
+    // var now = new Date();
     this.weatherChartViewWidth = this.getWeatherChartViewSize();
 
-    /* 
-      Workaround to fix "ExpressionChangedAfterItHasBeenCheckedError: 
-      Expression has changed after it was checked" 
+    /*
+      Workaround to fix "ExpressionChangedAfterItHasBeenCheckedError:
+      Expression has changed after it was checked"
     */
-    setTimeout(_ => this.view = [ this.weatherChartViewWidth, this.weatherChartViewHeight ] )  
+    setTimeout(_ => this.view = [ this.weatherChartViewWidth, this.weatherChartViewHeight ] )
 
     if (this.weatherChartViewWidth <= 480) {
       this.showLegend = false;
@@ -55,8 +55,8 @@ export class WeatherComponent implements AfterViewInit {
     Time-Scale component emits a number value and string describing dataset to Weather component.
     Then calls function when dropdown option is selected.
   */
-  getWeather(event:any): void {
-    //console.log(event);
+  getWeather(event: any): void {
+    // console.log(event);
     // Retreive weather data from the API
     this.weatherService.getWeatherData(event.sensorValue, event.scaleValue)
       .subscribe(
@@ -65,7 +65,7 @@ export class WeatherComponent implements AfterViewInit {
       );
   }
 
-  getWeatherChartViewSize():any {
+  getWeatherChartViewSize(): any {
     return this.weatherChartView.nativeElement.offsetWidth;
   }
 
@@ -73,14 +73,14 @@ export class WeatherComponent implements AfterViewInit {
     Line-Chart settings
   *********************/
 
-  //view: any[] = [900, 400];
-  //view: any[] = [ window.innerWidth, 480 ]; 
+  // view: any[] = [900, 400];
+  // view: any[] = [ window.innerWidth, 480 ];
 
   // Options
   showXAxis = true;
   showYAxis = true;
   gradient = false;
-  
+
   showXaxisLabel = true;
   xAxisLabel = "Date";
   showYaxisLabel = true;
@@ -96,12 +96,12 @@ export class WeatherComponent implements AfterViewInit {
   autoScale = true;
 
   onResize(event: any) { 
-    //console.log(this.getWeatherChartViewSize());
-    this.view = [ this.getWeatherChartViewSize(), this.weatherChartViewHeight ]; 
+    // console.log(this.getWeatherChartViewSize());
+    this.view = [ this.getWeatherChartViewSize(), this.weatherChartViewHeight ];
   }
 
   onSelect(event: any) {
-    //console.log(event);
+    // console.log(event);
   }
 
 }

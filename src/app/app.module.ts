@@ -21,11 +21,11 @@ import { TimeScaleService } from './time-scale.service';
 const ROUTES = [
   {
     path: '',
-    redirectTo: 'weather',
+    redirectTo: '/',
     pathMatch: 'full',
   },
   {
-    path: '',
+    path: 'weather',
     component: WeatherComponent
   }
 ]
