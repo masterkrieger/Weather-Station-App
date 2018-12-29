@@ -7,12 +7,27 @@
 
 .weatherchart {
 	background-color: #FFF;
-	padding-bottom: 30px;
 	margin: 10px auto; /* centered */
 	display: block;
 	border: 1px solid #C1C1C1;;
     border-radius: 10px;
     box-shadow: 2px 2px 2px #b4b4b4;
-    height: 425px;
-    width: 900px;
+    height: 325px;
+    width: 80%;
+}
+
+/* Small tablet to big tablet: from 768px to 1023px */
+@media only screen and (max-width: 1023px) { 
+    /*body { font-size: 18px;}
+    section { padding: 60px 0;}*/
+}
+
+/* Small phones to small tablets: from 481px to 767px */
+@media only screen and (max-width: 767px) { 
+	.weatherchart {width: 90%;}
+}
+
+/* Small phones: from 0 to 480px */
+@media only screen and (max-width: 480px) { 
+    h1 { font-size: 150%;}
 }

@@ -17,7 +17,10 @@ var WeatherSchema = new Schema({
   pressure: String,
   tempc: String,
   tempf: String,
-  time: String
+  time: String,
+  battery: String,
+  firmware_version: String
+
 },{ collection: 'weatherdata' });
 
 var Weather = mongoose.model('Weather',WeatherSchema);

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-//import {trigger, state, style, animate, transition } from '@angular/animations';
+import { Component, AfterViewInit, OnInit, ViewChild, ElementRef } from '@angular/core';
+// import {trigger, state, style, animate, transition } from '@angular/animations';
 
 import { WeatherService } from '../weather.service';
 
@@ -8,16 +8,34 @@ import { WeatherService } from '../weather.service';
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.css']
 })
-export class WeatherComponent implements OnInit {
+export class WeatherComponent implements AfterViewInit {
+
+  @ViewChild('weatherchart') weatherChartView: ElementRef;
 
   // Initialize data variables
   weatherData: any = [];
   errorMessage: any;
 
+  weatherChartViewHeight = 300;
+  weatherChartViewWidth = 900;
+  view: any[] = [this.weatherChartViewWidth, this.weatherChartViewHeight];
+  showLegend = true;
+
   constructor(private weatherService: WeatherService) {}
 
-  ngOnInit(): void {
-    var now = new Date();
+  ngAfterViewInit(): void {
+    // var now = new Date();
+    this.weatherChartViewWidth = this.getWeatherChartViewSize();
+
+    /*
+      Workaround to fix "ExpressionChangedAfterItHasBeenCheckedError:
+      Expression has changed after it was checked"
+    */
+    setTimeout(_ => this.view = [ this.weatherChartViewWidth, this.weatherChartViewHeight ] )
+
+    if (this.weatherChartViewWidth <= 480) {
+      this.showLegend = false;
+    }
   }
 
   getAllWeather(): void {
@@ -37,8 +55,8 @@ export class WeatherComponent implements OnInit {
     Time-Scale component emits a number value and string describing dataset to Weather component.
     Then calls function when dropdown option is selected.
   */
-  getWeather(event:any): void {
-    console.log(event);
+  getWeather(event: any): void {
+    // console.log(event);
     // Retreive weather data from the API
     this.weatherService.getWeatherData(event.sensorValue, event.scaleValue)
       .subscribe(
@@ -47,21 +65,28 @@ export class WeatherComponent implements OnInit {
       );
   }
 
+  getWeatherChartViewSize(): any {
+    return this.weatherChartView.nativeElement.offsetWidth;
+  }
+
   /*********************
     Line-Chart settings
   *********************/
 
-  view: any[] = [900, 400];
+  // view: any[] = [900, 400];
+  // view: any[] = [ window.innerWidth, 480 ];
 
   // Options
   showXAxis = true;
   showYAxis = true;
   gradient = false;
-  showLegend = true;
+
   showXaxisLabel = true;
   xAxisLabel = "Date";
   showYaxisLabel = true;
-  yAxisLabel = "TempF";
+  yAxisLabel = this.weatherData.scaleValue;
+  animations = false;
+  timeline = true;
 
   colorScheme = {
     domain: ['#5aa454', '#a10a28', '#c7b42c', '#aaaaa']
@@ -70,8 +95,13 @@ export class WeatherComponent implements OnInit {
   // line, area
   autoScale = true;
 
+  onResize(event: any) { 
+    // console.log(this.getWeatherChartViewSize());
+    this.view = [ this.getWeatherChartViewSize(), this.weatherChartViewHeight ];
+  }
+
   onSelect(event: any) {
-    console.log(event);
+    // console.log(event);
   }
 
 }
