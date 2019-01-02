@@ -25,7 +25,7 @@ const ROUTES = [
     pathMatch: 'full',
   },
   {
-    path: 'weather',
+    path: '',
     component: WeatherComponent
   }
 ]

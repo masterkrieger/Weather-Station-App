@@ -124,7 +124,8 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
           return a.timestamp - b.timestamp;
       }).map( data => {
         var now = new Date(data.timestamp);
-        var month = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        console.log(now);
+        var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         var hours = now.getHours();
         var minutes = now.getMinutes();
         var day = now.getDate();
@@ -133,7 +134,7 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
         if (minutes<10) minutes = '0' + minutes;
         if (day<10) day = '0' + day;
         // Readable format timestamp in local time
-        var timestamp = hours + ":" + minutes + " " + month[now.getMonth()-1] + "-" + day;
+        var timestamp = hours + ":" + minutes + " " + month[now.getMonth()] + "-" + day;
 
         return {
           'name': timestamp,

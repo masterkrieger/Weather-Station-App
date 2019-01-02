@@ -20,6 +20,31 @@ export class WeatherComponent implements AfterViewInit {
   weatherChartViewWidth = 900;
   view: any[] = [this.weatherChartViewWidth, this.weatherChartViewHeight];
   showLegend = true;
+  /*********************
+    Line-Chart settings
+  *********************/
+
+  // view: any[] = [900, 400];
+  // view: any[] = [ window.innerWidth, 480 ];
+
+  // Options
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+
+  showXAxisLabel = true;
+  xAxisLabel = 'Date';
+  showYAxisLabel = true;
+  yAxisLabel = this.weatherData.scaleValue;
+  animations = false;
+  timeline = true;
+
+  colorScheme = {
+    domain: ['#5aa454', '#a10a28', '#c7b42c', '#aaaaa']
+  };
+
+  // line, area
+  autoScale = true;
 
   constructor(private weatherService: WeatherService) {}
 
@@ -68,32 +93,6 @@ export class WeatherComponent implements AfterViewInit {
   getWeatherChartViewSize(): any {
     return this.weatherChartView.nativeElement.offsetWidth;
   }
-
-  /*********************
-    Line-Chart settings
-  *********************/
-
-  // view: any[] = [900, 400];
-  // view: any[] = [ window.innerWidth, 480 ];
-
-  // Options
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
-
-  showXaxisLabel = true;
-  xAxisLabel = "Date";
-  showYaxisLabel = true;
-  yAxisLabel = this.weatherData.scaleValue;
-  animations = false;
-  timeline = true;
-
-  colorScheme = {
-    domain: ['#5aa454', '#a10a28', '#c7b42c', '#aaaaa']
-  };
-
-  // line, area
-  autoScale = true;
 
   onResize(event: any) { 
     // console.log(this.getWeatherChartViewSize());

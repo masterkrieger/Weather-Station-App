@@ -1,11 +1,12 @@
 {
   "name": "weather-station-app",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build && node server.js",
+    "buildProd": "ng build --prod && node server.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -15,6 +16,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^4.0.0",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
     "@angular/core": "^4.0.0",
