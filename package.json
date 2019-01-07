@@ -1,6 +1,6 @@
 {
   "name": "weather-station-app",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -11,6 +11,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server": "pm2 start server.js --watch --name weatherserver",
+    "stop": "pm2 stop weatherserver",
     "database": "sudo mongod --fork --logpath /var/log/mongod.log",
     "dev": "npm run database | npm run server"
   },

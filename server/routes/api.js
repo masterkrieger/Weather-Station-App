@@ -9,6 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const http = require('http');
 
 // require WeatherSchema
 const Weather = require('../models/weather-schema');
@@ -17,6 +18,15 @@ const API = 'mongodb://localhost:27017/weatherdb';
 mongoose.connect(API, {
   useMongoClient: true,
 });
+
+
+/******************************
+***** Weather Underground *****
+******************************/
+const WundergroundHost = "http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php";
+const WundergroundID = "KPAPHOEN39";
+const WundergroundPassword = "j2fno5is";
+const inhgPerPascal = 0.00029529983071445;
 
 /******************************
  POST Requests
@@ -28,7 +38,44 @@ router.post('/weather', (req, res) => {
 
   console.log(req.body);
 
-  Weather.create(req.body, (err, post) => {
+  // Calculate Dewpoint in Celcius and Fahrenheit
+  // Calculations: https://cals.arizona.edu/azmet/dewpoint.html
+  // Code modified from https://learn.sparkfun.com/tutorials/weather-station-wirelessly-connected-to-wunderground/all
+  var L = Math.log(req.body.humidity / 100.0);
+  var M = 17.27 * req.body.tempc;
+  var N = 237.3 + req.body.tempc;
+  var B = (L + (M / N)) / 17.27;
+  var dewPoint = (237.3 * B) / (1.0 - B);
+
+  //Result is in C
+  req.body.dewptc = dewPoint
+  //Convert back to F
+  req.body.dewptf = dewPoint * 9 / 5.0 + 32;
+
+  var WundergroundURL = WundergroundHost + '?ID=' + WundergroundID + '&PASSWORD=' + WundergroundPassword + '&tempf=' + req.body.tempf + '&humidity=' + req.body.humidity + '&dewptf=' + req.body.dewptf + '&baromin=' + (req.body.pressure * inhgPerPascal) + '&dateutc=now&realtime=1&rtfreq=15&action=updateraw';
+  //console.log(WundergroundURL);
+
+  //--START Weather Underground POST--//
+  http.get(WundergroundURL, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+      //console.log(JSON.parse(data).explanation);
+      console.log("Wunderground response:" + data);
+    });
+
+  }).on("error", (err) => {
+    console.log("Error: " + err.message);
+  });
+  //--END Weather Underground POST--//
+
+  Weather.create(req.body, (err) => {
     
     if (err) return handleError(err)
     
@@ -43,7 +90,7 @@ router.post('/weather', (req, res) => {
 router.param('sensor', function (req, res, next, sensor) {
   // Fetch the sensor from a database
   req.sensor = sensor;
-  console.log('sensor = ', req.sensor);
+  //console.log('sensor = ', req.sensor);
   next();
 });
 
@@ -54,7 +101,7 @@ router.param('timeScale', function (req, res, next, timeScale) {
   switch (timeScale) {
     case "day":
       // last 24 hrs from now
-      req.timeScale = new Date(now.setHours(now.getHours()- 24)).toISOString();
+      req.timeScale = new Date(now.setHours(now.getHours() - 24)).toISOString();
       break;
     case "week":
       // last 7 days from now
@@ -74,7 +121,7 @@ router.param('timeScale', function (req, res, next, timeScale) {
   }
 
   // Fetch the timeScale from a database
-  console.log('timeScale = ', req.timeScale);
+  //console.log('timeScale = ', req.timeScale);
   next();
 });
 
@@ -86,7 +133,6 @@ router.param('timeScale', function (req, res, next, timeScale) {
 router.get('/', (req, res) => {
   res.send('api works');
 });
-
 
 // Get ALL weather data points
 router.get('/weather', (req, res) => {
@@ -124,7 +170,6 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
           return a.timestamp - b.timestamp;
       }).map( data => {
         var now = new Date(data.timestamp);
-        console.log(now);
         var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         var hours = now.getHours();
         var minutes = now.getMinutes();
