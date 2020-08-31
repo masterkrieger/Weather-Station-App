@@ -52,6 +52,7 @@ router.post('/weather', (req, res) => {
   //Convert back to F
   req.body.dewptf = dewPoint * 9 / 5.0 + 32;
 
+  /* REMOVED Wunderground API **********
   var WundergroundURL = WundergroundHost + '?ID=' + WundergroundID + '&PASSWORD=' + WundergroundPassword + '&tempf=' + req.body.tempf + '&humidity=' + req.body.humidity + '&dewptf=' + req.body.dewptf + '&baromin=' + (req.body.pressure * inhgPerPascal) + '&dateutc=now&realtime=1&rtfreq=15&action=updateraw';
   //console.log(WundergroundURL);
 
@@ -73,7 +74,7 @@ router.post('/weather', (req, res) => {
   }).on("error", (err) => {
     console.log("Error: " + err.message);
   });
-  //--END Weather Underground POST--//
+  //--END Weather Underground POST--//*/
 
   Weather.create(req.body, (err) => {
     
