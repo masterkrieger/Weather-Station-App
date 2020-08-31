@@ -1,8 +1,9 @@
 /*
  * Author: Jeremy Barr
- * Date: 26-May-2017
+ * Date Created: 26-May-2017
  * Description: MEAN Stack Server API to access Weather Database data.
- * Version: 1.0
+ * Version: 1.1
+ * Updated: 31-Aug-2020
  * Based on the Scotch.io tutorial: https://scotch.io/tutorials/mean-app-with-angular-2-and-the-angular-cli
 */
 
@@ -24,8 +25,8 @@ mongoose.connect(API, {
 ***** Weather Underground *****
 ******************************/
 const WundergroundHost = "http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php";
-const WundergroundID = "KPAPHOEN39";
-const WundergroundPassword = "j2fno5is";
+const WundergroundID = "";
+const WundergroundPassword = "";
 const inhgPerPascal = 0.00029529983071445;
 
 /******************************
@@ -183,20 +184,20 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
         var timestamp = hours + ":" + minutes + " " + month[now.getMonth()] + "-" + day;
 
         return {
-          'name': timestamp,
-          'value': data[req.sensor]
+          'station_id': data.station_id,
+          'timestamp': timestamp,
+          'sensor': data[req.sensor]
         };
-      });
+      // reduce function groups the ngxData by "station_id"
+      }).reduce((h, data) => Object.assign(h, { [data.station_id]: (h[data.station_id] || []).concat({ name: data.timestamp, value: data.sensor }) }), {});
     } else {
         ngxData = {
           'name': "null",
           'value': "0.0"
         }
-    }
-
-
+    }   
     // send response in json format.
-    res.json( [{ 'name': req.sensor, 'series': ngxData }] );
+    res.json([ngxData]);
 
     // Limit to number of results and '+' converts string to number.
     // Sorts the results by the 'timestamp' key in decending order
