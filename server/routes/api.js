@@ -143,14 +143,11 @@ router.get('/weather', (req, res) => {
     if (err)
       res.send(err);
 
-    let ngxData = weatherData.map( data => {
-      return {
-        'name': data.timestamp,
-        'value': data.tempf
-      };
-    });
+    //groups the weatherData by station_id
+    let ngxData = weatherData.reduce((h, data) => Object.assign(h, { [data.station_id]: (h[data.station_id] || []).concat({ name: data.timestamp, value: data.tempf }) }), {});
 
-    res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+    //res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+    res.json([ngxData]);
   }).sort('-timestamp');
 });
 
