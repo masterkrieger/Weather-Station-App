@@ -28,6 +28,18 @@ router.post('/weather', (req, res) => {
 
   console.log(req.body);
 
+  //req.body.dewptf = req.body.tempf - ((100 - req.body.humidity)/5);
+  var L = Math.log(req.body.humidity / 100.0);
+  var M = 17.27 * req.body.tempc;
+  var N = 237.3 + req.body.tempc;
+  var B = (L + (M / N)) / 17.27;
+  var dewPoint = (237.3 * B) / (1.0 - B);
+
+  //Result is in C
+  req.body.dewptc = dewPoint
+  //Convert back to F
+  req.body.dewptf = dewPoint * 9 / 5.0 + 32;
+
   Weather.create(req.body, (err, post) => {
     
     if (err) return handleError(err)

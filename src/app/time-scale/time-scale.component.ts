@@ -23,8 +23,8 @@ export class TimeScaleComponent implements OnInit {
     { key: 'Temp C', value: 'tempc'},
     { key: 'Humidity %RH', value: 'humidity'},
     { key: 'Pressure Pa', value: 'pressure'},
-    { key: 'Uptime sec', value: 'time'},
-    { key: 'Firmware Version', value: 'firmware_version'},
+    //{ key: 'Uptime sec', value: 'time'},
+    //{ key: 'Firmware Version', value: 'firmware_version'},
     { key: 'Battery', value: 'battery' }
   ];
 
