@@ -139,7 +139,7 @@ router.get('/', (req, res) => {
 // Get ALL weather data points
 router.get('/weather', (req, res) => {
   // Get weather data from the Database
-  Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
+  Weather.find({}, 'station_id timestamp tempf -_id', (err, weatherData) => {
     if (err)
       res.send(err);
 
@@ -158,7 +158,7 @@ router.get('/weather', (req, res) => {
 router.get('/weather/:sensor/:timeScale', (req, res) => {
 
   // Get weather data from the Database
-  Weather.find({}, 'timestamp ' + req.sensor +' -_id', (err, weatherData) => {
+  Weather.find({}, 'station_id timestamp ' + req.sensor +' -_id', (err, weatherData) => {
     if (err)
       res.send(err);
     
