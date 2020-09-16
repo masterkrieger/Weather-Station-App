@@ -53,30 +53,6 @@ router.post('/weather', (req, res) => {
   //Convert back to F
   req.body.dewptf = dewPoint * 9 / 5.0 + 32;
 
-  /* REMOVED Wunderground API **********
-  var WundergroundURL = WundergroundHost + '?ID=' + WundergroundID + '&PASSWORD=' + WundergroundPassword + '&tempf=' + req.body.tempf + '&humidity=' + req.body.humidity + '&dewptf=' + req.body.dewptf + '&baromin=' + (req.body.pressure * inhgPerPascal) + '&dateutc=now&realtime=1&rtfreq=15&action=updateraw';
-  //console.log(WundergroundURL);
-
-  //--START Weather Underground POST--//
-  http.get(WundergroundURL, (resp) => {
-    let data = '';
-
-    // A chunk of data has been recieved.
-    resp.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    // The whole response has been received. Print out the result.
-    resp.on('end', () => {
-      //console.log(JSON.parse(data).explanation);
-      console.log("Wunderground response:" + data);
-    });
-
-  }).on("error", (err) => {
-    console.log("Error: " + err.message);
-  });
-  //--END Weather Underground POST--//*/
-
   Weather.create(req.body, (err) => {
     
     if (err) return handleError(err)
