@@ -1,6 +1,6 @@
 {
   "name": "weather-station-app",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -17,6 +17,7 @@
   },
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts3-angular": "^1.5.0",    
     "@angular/animations": "^4.0.0",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
@@ -26,12 +27,11 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
-    "@swimlane/ngx-charts": "^6.0.1",
     "body-parser": "^1.17.2",
     "core-js": "^2.4.1",
     "d3": "^4.10.0",
     "express": "^4.15.3",
-    "mongoose": "^4.10.2",
+    "mongoose": "^5.10.2",
     "rxjs": "^5.1.0",
     "zone.js": "^0.8.4"
   },
@@ -43,15 +43,15 @@
     "codelyzer": "~2.0.0",
     "jasmine-core": "~2.5.2",
     "jasmine-spec-reporter": "~3.2.0",
-    "karma": "~1.4.1",
+    "karma": "^5.2.2",
     "karma-chrome-launcher": "~2.1.1",
     "karma-cli": "~1.0.1",
     "karma-coverage-istanbul-reporter": "^0.2.0",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.1.0",
+    "protractor": "^7.0.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
-    "typescript": "~2.2.0"
+    "typescript": "^2.9.2"
   }
 }

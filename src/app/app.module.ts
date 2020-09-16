@@ -4,9 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
-// ngx-charts
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// amCharts
+import { AmChartsModule } from "@amcharts/amcharts3-angular";
 
 // Weather Components
 import { AppComponent } from './app.component';
@@ -15,7 +14,6 @@ import { TimeScaleComponent } from './time-scale/time-scale.component';
 
 // Services
 import { WeatherService } from './weather.service';
-import { TimeScaleService } from './time-scale.service';
 
 // Define the routes
 const ROUTES = [
@@ -41,10 +39,9 @@ const ROUTES = [
     FormsModule,
     HttpModule,
     RouterModule.forRoot(ROUTES),
-    BrowserAnimationsModule,
-    NgxChartsModule
+    AmChartsModule
   ],
-  providers: [WeatherService, TimeScaleService],
+  providers: [WeatherService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
