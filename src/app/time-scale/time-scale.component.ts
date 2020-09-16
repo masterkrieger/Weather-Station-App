@@ -21,6 +21,8 @@ export class TimeScaleComponent implements OnInit {
   [
     { key: 'Temp F', value: 'tempf'},
     { key: 'Temp C', value: 'tempc'},
+    { key: 'Dewpoint F', value: 'dewptf' },
+    { key: 'Dewpoint C', value: 'dewptc' },
     { key: 'Humidity %RH', value: 'humidity'},
     { key: 'Pressure Pa', value: 'pressure'},
     //{ key: 'Uptime sec', value: 'time'},
@@ -79,14 +81,14 @@ export class TimeScaleComponent implements OnInit {
   selectTimeScale(timeScaleValue: string) {
     this.scale = this.setTimeScaleValues(timeScaleValue);
     this.emitValues(this.sensor, this.scale);
-    console.log(this.scale);
+    //console.log(this.scale);
   }
 
   // Function called when Time Scale button is selected
   selectSensor(sensorValue: string) {
     this.sensor = sensorValue;
     this.emitValues(this.sensor, this.scale);
-    console.log(this.sensor);
+    //console.log(this.sensor);
   }
 
   // Called to output the EventEmitter of the time-scale and sensor data values to the parent component

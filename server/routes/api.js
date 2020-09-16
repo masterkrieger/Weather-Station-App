@@ -1,14 +1,16 @@
 /*
  * Author: Jeremy Barr
- * Date: 26-May-2017
+ * Date Created: 26-May-2017
  * Description: MEAN Stack Server API to access Weather Database data.
- * Version: 1.0
+ * Version: 1.1
+ * Updated: 31-Aug-2020
  * Based on the Scotch.io tutorial: https://scotch.io/tutorials/mean-app-with-angular-2-and-the-angular-cli
 */
 
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const http = require('http');
 
 // require WeatherSchema
 const Weather = require('../models/weather-schema');
@@ -17,6 +19,15 @@ const API = 'mongodb://localhost:27017/weatherdb';
 mongoose.connect(API, {
   useMongoClient: true,
 });
+
+
+/******************************
+***** Weather Underground *****
+******************************/
+const WundergroundHost = "http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php";
+const WundergroundID = "";
+const WundergroundPassword = "";
+const inhgPerPascal = 0.00029529983071445;
 
 /******************************
  POST Requests
@@ -57,7 +68,7 @@ router.post('/weather', (req, res) => {
 router.param('sensor', function (req, res, next, sensor) {
   // Fetch the sensor from a database
   req.sensor = sensor;
-  console.log('sensor = ', req.sensor);
+  //console.log('sensor = ', req.sensor);
   next();
 });
 
@@ -68,7 +79,7 @@ router.param('timeScale', function (req, res, next, timeScale) {
   switch (timeScale) {
     case "day":
       // last 24 hrs from now
-      req.timeScale = new Date(now.setHours(now.getHours()- 24)).toISOString();
+      req.timeScale = new Date(now.setHours(now.getHours() - 24)).toISOString();
       break;
     case "week":
       // last 7 days from now
@@ -88,7 +99,7 @@ router.param('timeScale', function (req, res, next, timeScale) {
   }
 
   // Fetch the timeScale from a database
-  console.log('timeScale = ', req.timeScale);
+  //console.log('timeScale = ', req.timeScale);
   next();
 });
 
@@ -101,22 +112,18 @@ router.get('/', (req, res) => {
   res.send('api works');
 });
 
-
 // Get ALL weather data points
 router.get('/weather', (req, res) => {
   // Get weather data from the Database
-  Weather.find({}, 'timestamp tempf -_id', (err, weatherData) => {
+  Weather.find({}, 'station_id timestamp tempf -_id', (err, weatherData) => {
     if (err)
       res.send(err);
 
-    let ngxData = weatherData.map( data => {
-      return {
-        'name': data.timestamp,
-        'value': data.tempf
-      };
-    });
+    //groups the weatherData by station_id
+    let ngxData = weatherData.reduce((h, data) => Object.assign(h, { [data.station_id]: (h[data.station_id] || []).concat({ name: data.timestamp, value: data.tempf }) }), {});
 
-    res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+    //res.json( [{ 'name': 'TempF', 'series': ngxData }] );
+    res.json([ngxData]);
   }).sort('-timestamp');
 });
 
@@ -124,7 +131,7 @@ router.get('/weather', (req, res) => {
 router.get('/weather/:sensor/:timeScale', (req, res) => {
 
   // Get weather data from the Database
-  Weather.find({}, 'timestamp ' + req.sensor +' -_id', (err, weatherData) => {
+  Weather.find({}, 'station_id timestamp ' + req.sensor +' -_id', (err, weatherData) => {
     if (err)
       res.send(err);
     
@@ -138,7 +145,7 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
           return a.timestamp - b.timestamp;
       }).map( data => {
         var now = new Date(data.timestamp);
-        var month = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         var hours = now.getHours();
         var minutes = now.getMinutes();
         var day = now.getDate();
@@ -147,23 +154,23 @@ router.get('/weather/:sensor/:timeScale', (req, res) => {
         if (minutes<10) minutes = '0' + minutes;
         if (day<10) day = '0' + day;
         // Readable format timestamp in local time
-        var timestamp = hours + ":" + minutes + " " + month[now.getMonth()-1] + "-" + day;
+        var timestamp = hours + ":" + minutes + " " + month[now.getMonth()] + "-" + day;
 
         return {
-          'name': timestamp,
-          'value': data[req.sensor]
+          'station_id': data.station_id,
+          'timestamp': timestamp,
+          'sensor': data[req.sensor]
         };
-      });
+      // reduce function groups the ngxData by "station_id"
+      }).reduce((h, data) => Object.assign(h, { [data.station_id]: (h[data.station_id] || []).concat({ name: data.timestamp, value: data.sensor }) }), {});
     } else {
         ngxData = {
           'name': "null",
           'value': "0.0"
         }
-    }
-
-
+    }   
     // send response in json format.
-    res.json( [{ 'name': req.sensor, 'series': ngxData }] );
+    res.json([ngxData]);
 
     // Limit to number of results and '+' converts string to number.
     // Sorts the results by the 'timestamp' key in decending order
