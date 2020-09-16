@@ -31,7 +31,6 @@ router.post('/weather', (req, res) => {
   // Calculate Dewpoint in Celcius and Fahrenheit
   // Calculations: https://cals.arizona.edu/azmet/dewpoint.html
   // Code modified from https://learn.sparkfun.com/tutorials/weather-station-wirelessly-connected-to-wunderground/all
-  //req.body.dewptf = req.body.tempf - ((100 - req.body.humidity)/5);
   var L = Math.log(req.body.humidity / 100.0);
   var M = 17.27 * req.body.tempc;
   var N = 237.3 + req.body.tempc;
