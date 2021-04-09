@@ -3,19 +3,5 @@
 </div>
 
 <div #weatherchart class="weatherchart">
-  <ngx-charts-line-chart (window:resize)="onResize($event)"
-    [view]="view"
-    [scheme]="colorScheme"
-    [results]="weatherData"
-    [gradient]="gradient"
-    [xAxis]="showXAxis"
-    [yAxis]="showYAxis"
-    [legend]="showLegend"
-    [showXAxisLabel]="showXAxisLabel"
-    [showYAxisLabel]="showYAxisLabel"
-    [xAxisLabel]="xAxisLabel"
-    [yAxisLabel]="yAxisLabel"
-    [autoScale]="autoScale"
-    (select)="onSelect($event)">
-  </ngx-charts-line-chart>
+  <amCharts id="chartdiv" [options]="options" [style.width.%]="100" [style.height.px]="500"></amCharts>
 </div>

@@ -1,6 +1,5 @@
-import { Component, AfterViewInit, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 // import {trigger, state, style, animate, transition } from '@angular/animations';
-
 import { WeatherService } from '../weather.service';
 
 @Component({
@@ -12,55 +11,78 @@ export class WeatherComponent implements AfterViewInit {
 
   @ViewChild('weatherchart') weatherChartView: ElementRef;
 
+  // amCharts options variable
+  public options: any;
   // Initialize data variables
   weatherData: any = [];
   errorMessage: any;
-
-  weatherChartViewHeight = 300;
-  weatherChartViewWidth = 900;
-  view: any[] = [this.weatherChartViewWidth, this.weatherChartViewHeight];
-  showLegend = true;
-  /*********************
-    Line-Chart settings
-  *********************/
-
-  // view: any[] = [900, 400];
-  // view: any[] = [ window.innerWidth, 480 ];
-
-  // Options
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
-
-  showXAxisLabel = true;
-  xAxisLabel = 'Date';
-  showYAxisLabel = true;
-  yAxisLabel = this.weatherData.scaleValue;
-  animations = false;
-  timeline = true;
-
-  colorScheme = {
-    domain: ['#5aa454', '#a10a28', '#c7b42c', '#aaaaa']
-  };
-
-  // line, area
-  autoScale = true;
+  sensorLabel: any;
 
   constructor(private weatherService: WeatherService) {}
 
   ngAfterViewInit(): void {
     // var now = new Date();
-    this.weatherChartViewWidth = this.getWeatherChartViewSize();
+    //this.chart = this.AmCharts.makeChart('chartdiv', this.makeOptions(this.weatherData));
+    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
 
-    /*
-      Workaround to fix "ExpressionChangedAfterItHasBeenCheckedError:
-      Expression has changed after it was checked"
-    */
-    setTimeout(_ => this.view = [ this.weatherChartViewWidth, this.weatherChartViewHeight ] )
+    // Updates chart with full weatherData after some time
+    setInterval(() => {
+      // Update chartdiv
+      this.options = this.makeOptions(this.weatherData, this.sensorLabel);
+    }, 3000);
+  }
 
-    if (this.weatherChartViewWidth <= 480) {
-      this.showLegend = false;
-    }
+  makeOptions(dataProvider, sensorLabel) {
+    return {
+      "type": "xy",
+      "theme": "light",
+      "dataDateFormat": "HH:NN DD-MM-YYYY",
+      "startDuration": 1.5,
+      "chartCursor": {},
+      "graphs": [{
+        "title": "WeMos-3666",
+        "bullet": "diamond",
+        "balloon": {
+          "adjustBorderColor": true,
+          "color": "#000000",
+          "cornerRadius": 5,
+          "fillColor": "#FFFFFF"
+        },
+        'balloonText': '[[WeMos-3666timestamp]]<br><b><span style=\'font-size:14px;\'>[[WeMos-3666]]</span></b>',
+        "lineAlpha": 1,
+        "lineColor": "#655dd1",
+        "xField": "WeMos-3666timestamp",
+        "yField": "WeMos-3666"
+      }, {
+        "title": "Thing-1091",
+        "bullet": "round",
+        'balloonText': '[[Thing-1091timestamp]]<br><b><span style=\'font-size:14px;\'>[[Thing-1091]]</span></b>',
+        "lineAlpha": 1,
+        "lineColor": "#D1655D",
+        "xField": "Thing-1091timestamp",
+        "yField": "Thing-1091"
+      }],
+      "valueAxes": [{
+        "id": "v1",
+        "axisAlpha": 0,
+        "title": sensorLabel,
+        "position": "left"
+      }, {
+        "id": "v2",
+        "axisAlpha": 0,
+        "position": "bottom",
+        "type": "date"
+      }],
+      "legend": {
+        "useGraphSettings": true,
+        "align": "left",
+      },
+      "dataProvider": dataProvider,
+      "export": {
+        enabled: true
+      },
+      "creditsPosition": "bottom-right"
+    };
   }
 
   getAllWeather(): void {
@@ -88,19 +110,9 @@ export class WeatherComponent implements AfterViewInit {
         weatherData => this.weatherData = weatherData,
         error => this.errorMessage = <any>error
       );
+    // Update the y-axis label
+    this.sensorLabel = event.sensorLabel;
+    // This must be called when making any changes to the chart
+    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
   }
-
-  getWeatherChartViewSize(): any {
-    return this.weatherChartView.nativeElement.offsetWidth;
-  }
-
-  onResize(event: any) { 
-    // console.log(this.getWeatherChartViewSize());
-    this.view = [ this.getWeatherChartViewSize(), this.weatherChartViewHeight ];
-  }
-
-  onSelect(event: any) {
-    // console.log(event);
-  }
-
 }

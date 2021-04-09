@@ -1,6 +1,4 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import { WeatherService } from '../weather.service';
-import { TimeScaleValue } from './time-scale-value';
 
 @Component({
   selector: 'app-time-scale',
@@ -25,8 +23,6 @@ export class TimeScaleComponent implements OnInit {
     { key: 'Dewpoint C', value: 'dewptc' },
     { key: 'Humidity %RH', value: 'humidity'},
     { key: 'Pressure Pa', value: 'pressure'},
-    //{ key: 'Uptime sec', value: 'time'},
-    //{ key: 'Firmware Version', value: 'firmware_version'},
     { key: 'Battery', value: 'battery' }
   ];
 
@@ -37,17 +33,17 @@ export class TimeScaleComponent implements OnInit {
   now: Date;
   scale: string;
   sensor: string;
+  sensorLabel: string;
 
   ngOnInit() {
 
     // Set default values to scale and sensor on Initialization
     this.scale = this.setTimeScaleValues('day');
     this.sensor = this.sensorData[0].value;
-    // console.log(this.timeScale);
-    // console.log(this.sensorData);
+    this.sensorLabel = this.sensorData[0].key;
 
     // emits default timeScale values on Initialization.
-    this.emitValues(this.sensor, this.scale);
+    this.emitValues(this.sensor, this.scale, this.sensorLabel);
   }
 
   setTimeScaleValues(timeScaleValue:string):string {
@@ -80,20 +76,21 @@ export class TimeScaleComponent implements OnInit {
   // Function called when Time Scale button is selected
   selectTimeScale(timeScaleValue: string) {
     this.scale = this.setTimeScaleValues(timeScaleValue);
-    this.emitValues(this.sensor, this.scale);
+    this.emitValues(this.sensor, this.scale, this.sensorLabel);
     //console.log(this.scale);
   }
 
   // Function called when Time Scale button is selected
-  selectSensor(sensorValue: string) {
+  selectSensor(sensorValue: string, sensorLabel: string) {
     this.sensor = sensorValue;
-    this.emitValues(this.sensor, this.scale);
+    this.sensorLabel = sensorLabel;
+    this.emitValues(this.sensor, this.scale, this.sensorLabel);
     //console.log(this.sensor);
   }
 
   // Called to output the EventEmitter of the time-scale and sensor data values to the parent component
-  emitValues(sensorValue: string, scaleValue: string ) {
-    this.select.emit({ sensorValue: sensorValue, scaleValue: scaleValue});
+  emitValues(sensorValue: string, scaleValue: string, sensorLabel: string) {
+    this.select.emit({ sensorValue: sensorValue, scaleValue: scaleValue, sensorLabel: sensorLabel });
   }
 
 }
