@@ -1,7 +1,6 @@
 [![Node](https://img.shields.io/badge/node-v6.11.2-blue.svg)]()
-[![MongoDB](https://img.shields.io/badge/mongodb-v3.4.7-blue.svg)]()
-[![Angular/core](https://img.shields.io/badge/Angular%2Fcore-%404.3.1-blue.svg)]()
-[![VersionEye](https://img.shields.io/versioneye/d/ruby/rails.svg)]()
+[![MongoDB](https://img.shields.io/badge/mongodb-v4.0.23-blue.svg)]()
+[![Angular/core](https://img.shields.io/badge/Angular/core-v4.3.1-blue)]()
 [![GitHub version](https://badge.fury.io/gh/masterkrieger%2FWeather-Station-App.svg)](https://badge.fury.io/gh/masterkrieger%2FWeather-Station-App)
 
 # Weather-Station-App
