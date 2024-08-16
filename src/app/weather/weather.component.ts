@@ -1,118 +1,188 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-// import {trigger, state, style, animate, transition } from '@angular/animations';
+import { Component, OnInit, OnDestroy, signal, ViewChild, ElementRef } from '@angular/core';
+import { NgFor } from "@angular/common";
+
+// ECharts
+import { EChartsOption } from 'echarts';
+import { NgxEchartsModule } from 'ngx-echarts';
+
+// Weather Service and TimeScale Component
 import { WeatherService } from '../weather.service';
+import { TimeScaleComponent } from '../time-scale/time-scale.component';
 
 @Component({
   selector: 'app-weather',
+  standalone: true,
+  imports: [NgxEchartsModule,TimeScaleComponent,NgFor],
   templateUrl: './weather.component.html',
-  styleUrls: ['./weather.component.css']
+  styleUrl: './weather.component.css'
 })
-export class WeatherComponent implements AfterViewInit {
+export class WeatherComponent implements OnInit, OnDestroy {
 
-  @ViewChild('weatherchart') weatherChartView: ElementRef;
+  //@ViewChild('weatherchart') weatherChartView: ElementRef;
 
-  // amCharts options variable
-  public options: any;
+  // ECharts options variable
+  public weatherChartOptions: EChartsOption = {};
+
   // Initialize data variables
-  weatherData: any = [];
-  errorMessage: any;
-  sensorLabel: any;
+  public weatherData: any = [];
+  public errorMessage: any;
+  public sensorLabel: any;
+  public now: Date = new Date();
+  public timer: any;
+
+  isBrowser = signal(false);  // a signal to store if platform is browser
+  
 
   constructor(private weatherService: WeatherService) {}
 
-  ngAfterViewInit(): void {
-    // var now = new Date();
-    //this.chart = this.AmCharts.makeChart('chartdiv', this.makeOptions(this.weatherData));
-    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
+  ngOnInit (): void {
+    console.log("Weather component loaded");
+    this.now = new Date();
+    // Retreive weather data from the API
+    //this.getWeather({ sensorValue: 'tempf', scaleValue: new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString(), sensorLabel: 'Temperature (°F)'})
+    //this.getWeatherData('tempf', new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString(), 'Temp F');
+    this.updateOptions(this.weatherData);
 
     // Updates chart with full weatherData after some time
-    setInterval(() => {
-      // Update chartdiv
-      this.options = this.makeOptions(this.weatherData, this.sensorLabel);
-    }, 3000);
+    if(this.isBrowser()) { // check it where you want to write setTimeout or setInterval   
+      setInterval(() => {
+        // Update chartdiv
+        //this.updateOptions  = this.makeUpdatedOptions(this.weatherData, this.sensorLabel);
+        this.updateOptions(this.weatherData);
+      }, 1000);
+    }
   }
 
-  makeOptions(dataProvider, sensorLabel) {
-    return {
-      "type": "xy",
-      "theme": "light",
-      "dataDateFormat": "HH:NN DD-MM-YYYY",
-      "startDuration": 1.5,
-      "chartCursor": {},
-      "graphs": [{
-        "title": "WeMos-3666",
-        "bullet": "diamond",
-        "balloon": {
-          "adjustBorderColor": true,
-          "color": "#000000",
-          "cornerRadius": 5,
-          "fillColor": "#FFFFFF"
+  ngOnDestroy() {
+    clearInterval(this.timer);
+  }
+  updateOptions(transformedData: { labels: string[], series: any[] }): void {
+    if (!transformedData || !transformedData.series || transformedData.series.length === 0) {
+      console.error('No data available for the chart.');
+      return;
+    }
+
+    this.weatherChartOptions = {
+      title: {
+        text: 'Weather Data',
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: transformedData.series.map(series => series.name),
+        align: 'left',
+      },      
+      xAxis: {
+        type: 'time',
+        splitLine: {
+          show: false,
         },
-        'balloonText': '[[WeMos-3666timestamp]]<br><b><span style=\'font-size:14px;\'>[[WeMos-3666]]</span></b>',
-        "lineAlpha": 1,
-        "lineColor": "#655dd1",
-        "xField": "WeMos-3666timestamp",
-        "yField": "WeMos-3666"
-      }, {
-        "title": "Thing-1091",
-        "bullet": "round",
-        'balloonText': '[[Thing-1091timestamp]]<br><b><span style=\'font-size:14px;\'>[[Thing-1091]]</span></b>',
-        "lineAlpha": 1,
-        "lineColor": "#D1655D",
-        "xField": "Thing-1091timestamp",
-        "yField": "Thing-1091"
-      }],
-      "valueAxes": [{
-        "id": "v1",
-        "axisAlpha": 0,
-        "title": sensorLabel,
-        "position": "left"
-      }, {
-        "id": "v2",
-        "axisAlpha": 0,
-        "position": "bottom",
-        "type": "date"
-      }],
-      "legend": {
-        "useGraphSettings": true,
-        "align": "left",
       },
-      "dataProvider": dataProvider,
-      "export": {
-        enabled: true
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%'],
+        splitLine: {
+          show: false,
+        },
       },
-      "creditsPosition": "bottom-right"
+      series: transformedData.series.map(seriesData => ({
+        name: seriesData.name,
+        type: 'line',
+        showSymbol: false,
+        data: seriesData.data.map((value:any, index:any) => [transformedData.labels[index], value])
+      })),
     };
   }
 
-  getAllWeather(): void {
-    // Retreive posts from the API
-    this.weatherService.getAllWeatherData()
-      .subscribe(
-        weatherData => this.weatherData = weatherData,
-        error => this.errorMessage = <any>error
-      );
+  transformDataForECharts(data: any[]): { labels: string[], series: any[] } {
+    const labels: Set<string> = new Set();
+    const seriesMap: Map<string, { name: string, type: string, data: number[] }> = new Map();
+
+    data.forEach(entry => {
+      const date = new Date(entry.timestamp);
+      const label = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+      labels.add(label);
+
+      if (!seriesMap.has(entry.station_id)) {
+        seriesMap.set(entry.station_id, { name: entry.station_id, type: 'line', data: [] });
+      }
+      seriesMap.get(entry.station_id)?.data.push(parseFloat(entry.tempf));
+    });
+
+    return { labels: Array.from(labels), series: Array.from(seriesMap.values()) };
   }
 
   /*
-    Description: Function to retrieve a limited number of data points of a specific dataset from service.
-    Input: 'limit' - number amount of last data points
-    Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
+  * Description: Function to retrieve all weather data from service.
+  */
 
-    Time-Scale component emits a number value and string describing dataset to Weather component.
-    Then calls function when dropdown option is selected.
+  getAllWeather(): void {
+    // Retreive posts from the API
+    var weathaerServiceData: any[] = [];
+    this.weatherService.getAllWeatherData().subscribe({
+      next: (weatherData: any[]) => {
+        weathaerServiceData = weatherData;
+        console.log("Get all weather data/n", weathaerServiceData);
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+      }
+    })
+
+    this.weatherData = this.transformDataForECharts(weathaerServiceData);
+    // This must be called when making any changes to the chart
+    this.updateOptions(this.weatherData);
+  }
+
+  /*
+  *  Description: Function to retrieve a limited number of data points of a specific dataset from service.
+  *  Input: 'limit' - number amount of last data points
+  *  Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
+
+  *  Time-Scale component emits a number value and string describing dataset to Weather component.
+  *  Then calls function when dropdown option is selected.
   */
   getWeather(event: any): void {
     // console.log(event);
     // Retreive weather data from the API
-    this.weatherService.getWeatherData(event.sensorValue, event.scaleValue)
-      .subscribe(
-        weatherData => this.weatherData = weatherData,
-        error => this.errorMessage = <any>error
-      );
+    var weathaerServiceData: any[] = [];
+    this.weatherService.getWeatherDataObservable(event.sensorValue, event.scaleValue).subscribe({
+      next: (weatherData: any[]) => {
+        weathaerServiceData = weatherData;
+        console.log("Get ${event.sensorValue} weather data for the last ${event.scaleValue}/n", weathaerServiceData);
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+      }
+    })
+
+    this.weatherData = this.transformDataForECharts(weathaerServiceData);
+    console.log(this.weatherData)
     // Update the y-axis label
     this.sensorLabel = event.sensorLabel;
     // This must be called when making any changes to the chart
-    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
+    this.updateOptions(this.weatherData);
   }
+  
+  /*
+  getWeatherData(sensorValue: string, scaleValue: string, sensorLabel: string): void {
+
+    // Retreive weather data from the API
+    this.weatherService.getWeatherDataObservable(sensorValue, scaleValue).subscribe({
+      next: (weatherData: any[]) => {
+        this.weatherData = weatherData;
+      },
+      error: (error: any) => {
+        this.errorMessage = error;
+        console.log(error);
+      }
+    })
+
+    // Update the y-axis label
+    this.sensorLabel = sensorLabel;
+    // This must be called when making any changes to the chart
+    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
+  }  */
+
 }

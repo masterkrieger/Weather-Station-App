@@ -1,15 +1,16 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { WeatherService } from './weather.service';
 
 describe('WeatherService', () => {
+  let service: WeatherService;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [WeatherService]
-    });
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(WeatherService);
   });
 
-  it('should be created', inject([WeatherService], (service: WeatherService) => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 });
