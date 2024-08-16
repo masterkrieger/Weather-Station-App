@@ -65,6 +65,9 @@ export class WeatherComponent implements OnInit, OnDestroy {
 
     const stationIds = weatherData.map((series: any) => series.name);
 
+    // Define a color palette
+    const colorPalette = ['#5470C6', '#91CC75', '#EE6666', '#73C0DE', '#FAC858', '#9A60B4', '#EA7CCC'];
+
     this.weatherChartOptions = {
       title: {
         //text: 'Weather Data',
@@ -87,9 +90,18 @@ export class WeatherComponent implements OnInit, OnDestroy {
         },
         axisLabel: {
           formatter: function (value: number) {
-            return new Date(value).toLocaleString(); // Format x-axis labels as date-time strings
-          }
-        }
+            const date = new Date(value);
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+  
+            if (hours === 0 && minutes === 0) {
+              return date.toLocaleDateString(); // Show date at midnight
+            } else if (minutes === 0) {
+              return `${hours}:00`; // Show hour at the start of each hour
+            }
+            return ''; // Hide other labels
+          },
+        },
       },
       yAxis: {
         type: 'value',
@@ -112,7 +124,12 @@ export class WeatherComponent implements OnInit, OnDestroy {
         nameLocation: 'middle',     // Position the label in the middle of the axis
         nameGap: 30                 // Gap between the label and the axis
       },
-      series: weatherData,
+      series: weatherData.map((series, index) => ({
+        ...series,
+        itemStyle: {
+          color: colorPalette[index % colorPalette.length]
+        }
+      })),
     };
   }
 
