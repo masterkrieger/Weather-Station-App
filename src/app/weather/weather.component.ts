@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, signal, ViewChild, ElementRef } from '@angular/core';
-import { NgFor } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 
 // ECharts
 import { EChartsOption } from 'echarts';
@@ -12,7 +12,7 @@ import { TimeScaleComponent } from '../time-scale/time-scale.component';
 @Component({
   selector: 'app-weather',
   standalone: true,
-  imports: [NgxEchartsModule,TimeScaleComponent,NgFor],
+  imports: [NgxEchartsModule, TimeScaleComponent, NgFor, NgIf],
   templateUrl: './weather.component.html',
   styleUrl: './weather.component.css'
 })
@@ -26,6 +26,7 @@ export class WeatherComponent implements OnInit, OnDestroy {
   // Initialize data variables
   public weatherData: any = [];
   public errorMessage: any;
+  public sensor: any;
   public sensorLabel: any;
   public now: Date = new Date();
   public timer: any;
@@ -39,15 +40,12 @@ export class WeatherComponent implements OnInit, OnDestroy {
     console.log("Weather component loaded");
     this.now = new Date();
     // Retreive weather data from the API
-    //this.getWeather({ sensorValue: 'tempf', scaleValue: new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString(), sensorLabel: 'Temperature (°F)'})
-    //this.getWeatherData('tempf', new Date(new Date().setMonth(this.now.getMonth() - 1)).toISOString(), 'Temp F');
     this.updateOptions(this.weatherData);
 
     // Updates chart with full weatherData after some time
     if(this.isBrowser()) { // check it where you want to write setTimeout or setInterval   
       setInterval(() => {
         // Update chartdiv
-        //this.updateOptions  = this.makeUpdatedOptions(this.weatherData, this.sensorLabel);
         this.updateOptions(this.weatherData);
       }, 1000);
     }
@@ -56,133 +54,120 @@ export class WeatherComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     clearInterval(this.timer);
   }
-  updateOptions(transformedData: { labels: string[], series: any[] }): void {
-    if (!transformedData || !transformedData.series || transformedData.series.length === 0) {
-      console.error('No data available for the chart.');
-      return;
-    }
+
+  updateOptions(weatherData: any[]): void {
+    // Extract all y-axis values from the series data
+    const allValues = weatherData.flatMap(series => series.data.map((d: [number, number]) => d[1]));
+
+    // Calculate the min and max values
+    const minValue = Math.min(...allValues);
+    const maxValue = Math.max(...allValues);
+
+    const stationIds = weatherData.map((series: any) => series.name);
 
     this.weatherChartOptions = {
       title: {
-        text: 'Weather Data',
+        //text: 'Weather Data',
       },
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+        }
       },
       legend: {
-        data: transformedData.series.map(series => series.name),
+        data: stationIds,
         align: 'left',
-      },      
+      },
       xAxis: {
+        name: 'Date',
         type: 'time',
         splitLine: {
           show: false,
         },
+        axisLabel: {
+          formatter: function (value: number) {
+            return new Date(value).toLocaleString(); // Format x-axis labels as date-time strings
+          }
+        }
       },
       yAxis: {
         type: 'value',
         boundaryGap: [0, '100%'],
+        min: minValue,
+        max: maxValue,
         splitLine: {
-          show: false,
+          show: true,  // Show major grid lines
+          lineStyle: {
+            type: 'solid'
+          }
         },
+        minorSplitLine: {
+          show: true,  // Show minor grid lines
+          lineStyle: {
+            type: 'dashed'
+          }
+        },
+        name: this.sensorLabel,     // Label for the y-axis
+        nameLocation: 'middle',     // Position the label in the middle of the axis
+        nameGap: 30                 // Gap between the label and the axis
       },
-      series: transformedData.series.map(seriesData => ({
-        name: seriesData.name,
-        type: 'line',
-        showSymbol: false,
-        data: seriesData.data.map((value:any, index:any) => [transformedData.labels[index], value])
-      })),
+      series: weatherData,
     };
   }
 
-  transformDataForECharts(data: any[]): { labels: string[], series: any[] } {
-    const labels: Set<string> = new Set();
-    const seriesMap: Map<string, { name: string, type: string, data: number[] }> = new Map();
+  processWeatherData(data: any[], sensorValue: string): any {
+    const processedData: { [key: string]: { [key: string]: number } } = {};
 
-    data.forEach(entry => {
-      const date = new Date(entry.timestamp);
-      const label = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-      labels.add(label);
-
-      if (!seriesMap.has(entry.station_id)) {
-        seriesMap.set(entry.station_id, { name: entry.station_id, type: 'line', data: [] });
+    data.forEach(item => {
+      const { station_id, timestamp, tempf, dewptf } = item;
+      const value = parseFloat(item[sensorValue]); // Dynamically handle any sensor type
+  
+      if (!processedData[station_id]) {
+        processedData[station_id] = {};
       }
-      seriesMap.get(entry.station_id)?.data.push(parseFloat(entry.tempf));
+  
+      processedData[station_id][timestamp] = value;
     });
-
-    return { labels: Array.from(labels), series: Array.from(seriesMap.values()) };
-  }
-
-  /*
-  * Description: Function to retrieve all weather data from service.
-  */
-
-  getAllWeather(): void {
-    // Retreive posts from the API
-    var weathaerServiceData: any[] = [];
-    this.weatherService.getAllWeatherData().subscribe({
-      next: (weatherData: any[]) => {
-        weathaerServiceData = weatherData;
-        console.log("Get all weather data/n", weathaerServiceData);
-      },
-      error: (error: any) => {
-        this.errorMessage = error;
-      }
-    })
-
-    this.weatherData = this.transformDataForECharts(weathaerServiceData);
-    // This must be called when making any changes to the chart
-    this.updateOptions(this.weatherData);
+  
+    // Convert to ECharts format
+    const series: any[] = [];
+  
+    for (const [stationId, timestamps] of Object.entries(processedData)) {
+      series.push({
+        name: stationId,
+        type: 'line',
+        showSymbol: false,  // Hide data points
+        data: Object.keys(timestamps).map(ts => [new Date(ts).getTime(), timestamps[ts]]) // Convert timestamps to [time, value]
+      });
+    }
+  
+    return series;
   }
 
   /*
   *  Description: Function to retrieve a limited number of data points of a specific dataset from service.
-  *  Input: 'limit' - number amount of last data points
-  *  Input: 'dataset' - string of weather data units (tempf, tempc, humidity, pressure, or altitude)
-
-  *  Time-Scale component emits a number value and string describing dataset to Weather component.
-  *  Then calls function when dropdown option is selected.
+  *  Input: 'event' - contains sensorValue (tempf, tempc, humidity, pressure, or altitude) and scaleValue
+  *  Calls updateOptions to update chartOptions and transforms API data into weatherData
   */
   getWeather(event: any): void {
-    // console.log(event);
     // Retreive weather data from the API
-    var weathaerServiceData: any[] = [];
     this.weatherService.getWeatherDataObservable(event.sensorValue, event.scaleValue).subscribe({
       next: (weatherData: any[]) => {
-        weathaerServiceData = weatherData;
-        console.log("Get ${event.sensorValue} weather data for the last ${event.scaleValue}/n", weathaerServiceData);
+        this.weatherData = this.processWeatherData(weatherData, event.sensorValue);
+        //console.log(`Get ${event.sensorValue} weather data for the last ${event.scaleValue}`, weatherData);
+        console.log("Processed weatherData: ", this.weatherData);
+        this.updateOptions(this.weatherData); // Ensure chart options are updated
       },
       error: (error: any) => {
         this.errorMessage = error;
       }
     })
 
-    this.weatherData = this.transformDataForECharts(weathaerServiceData);
-    console.log(this.weatherData)
-    // Update the y-axis label
+    // Update the y-axis label and sensor type
     this.sensorLabel = event.sensorLabel;
+    this.sensor = event.sensorValue;
     // This must be called when making any changes to the chart
-    this.updateOptions(this.weatherData);
+    //this.updateOptions(this.weatherData);
   }
-  
-  /*
-  getWeatherData(sensorValue: string, scaleValue: string, sensorLabel: string): void {
-
-    // Retreive weather data from the API
-    this.weatherService.getWeatherDataObservable(sensorValue, scaleValue).subscribe({
-      next: (weatherData: any[]) => {
-        this.weatherData = weatherData;
-      },
-      error: (error: any) => {
-        this.errorMessage = error;
-        console.log(error);
-      }
-    })
-
-    // Update the y-axis label
-    this.sensorLabel = sensorLabel;
-    // This must be called when making any changes to the chart
-    this.options = this.makeOptions(this.weatherData, this.sensorLabel);
-  }  */
-
 }

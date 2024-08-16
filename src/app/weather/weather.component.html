@@ -3,15 +3,5 @@
 </div>
 
 <div #weatherchart class="weatherchart">
-    <div echarts id="chartdiv" [options]="weatherChartOptions" [style.width.%]="100" [style.height.px]="500"></div>
-    <!--<ul>
-        <li *ngFor="let data of weatherData">
-            <ul>
-                <li>Station: {{data.station_id}}</li>
-                <li>TempF: {{data.tempf}}</li>
-                <li>Date: {{data.timestamp}}</li>
-            </ul>
-        </li>
-    </ul>-->
-    
+    <div echarts id="chartdiv" [options]="weatherChartOptions" [style.width.%]="100" [style.height.px]="500" *ngIf="weatherData"></div>
 </div>
