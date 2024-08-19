@@ -124,6 +124,17 @@ export class WeatherComponent implements OnInit, OnDestroy {
         nameLocation: 'middle',     // Position the label in the middle of the axis
         nameGap: 30                 // Gap between the label and the axis
       },
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 0,
+          end: 100
+        },
+        {
+          start: 0,
+          end: 100
+        }
+      ],
       series: weatherData.map((series, index) => ({
         ...series,
         itemStyle: {
