@@ -1,8 +1,8 @@
 /*
  * Author: Jeremy Barr
- * Date Created: 16-Sept-2020
+ * Date Created: 16-Aug-2024
  * Description: MEAN Stack Server API to access Weather Database data.
- * Version: 2.0
+ * Version: 3.0
 */
 
 const express = require('express');
@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 const Weather = require('../models/weather-schema');
 
 //const API = 'mongodb://localhost:27017/weatherdb';
-const API = 'mongodb://10.0.0.102:27017/weatherdb';
+const API = 'mongodb://localhost:27017/weatherdb';
 mongoose.connect(API)   
   .then(()=>{
     console.log("DB connection successful.");
