@@ -1,15 +1,14 @@
 /*
  * Author: Jeremy Barr
- * Date: 26-May-2017
+ * Date Created: 09-Aug-2024
  * Description: MEAN Stack Server  to route to '/api' and '*' to all other routes (Anguar routes).
- *
- * Based on the Scotch.io tutorial: https://scotch.io/tutorials/mean-app-with-angular-2-and-the-angular-cli
+ * Version: 2.0
 */
 
 // Get dependencies
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
-const http = require('http');
 const bodyParser = require('body-parser');
 
 // Get API routes
@@ -18,18 +17,19 @@ const api = require('./server/routes/api');
 const app = express();
 
 // Parsers for POST data
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Point static path to dist
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist/weather-station-app/browser/')));
 
 // Set our api routes
 app.use('/api', api);
 
 // Catch all other routes and return the index files
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+ res.sendFile(path.join(__dirname, 'dist/weather-station-app/browser/index.html'));
 });
 
 /**
@@ -40,10 +40,8 @@ app.set('port', port);
 
 /**
  * Create HTTP server.
- */
-const server = http.createServer(app);
-
-/**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(port, () => console.log(`API running on localhost:${port}`));
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}.`);
+});

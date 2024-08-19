@@ -1,7 +1,7 @@
 <div class="weatheroptions">
-  <app-time-scale (select)="getWeather($event)"></app-time-scale>
+    <app-time-scale (select)="getWeather($event)"></app-time-scale>
 </div>
 
 <div #weatherchart class="weatherchart">
-  <amCharts id="chartdiv" [options]="options" [style.width.%]="100" [style.height.px]="500"></amCharts>
+    <div echarts id="chartdiv" [options]="weatherChartOptions" [style.width.%]="100" [style.height.px]="500" *ngIf="weatherData"></div>
 </div>

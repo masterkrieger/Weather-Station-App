@@ -5,10 +5,9 @@
  *
 */
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-var WeatherSchema = new Schema({
+const WeatherSchema = new mongoose.Schema({
   station_id: String,
   timestamp: Date,
   dewptf: String,
@@ -25,6 +24,4 @@ var WeatherSchema = new Schema({
 
 },{ collection: 'weatherdata' });
 
-var Weather = mongoose.model('Weather',WeatherSchema);
-
-module.exports = Weather;
+module.exports = mongoose.model('Weather', WeatherSchema);;

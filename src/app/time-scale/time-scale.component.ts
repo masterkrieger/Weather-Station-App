@@ -1,12 +1,15 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import {NgFor} from "@angular/common";
 
 @Component({
   selector: 'app-time-scale',
+  standalone: true,
+  imports: [NgFor],
   templateUrl: './time-scale.component.html',
-  styleUrls: ['./time-scale.component.css']
+  styleUrl: './time-scale.component.css'
 })
 export class TimeScaleComponent implements OnInit {
-
+  
   @Input() timeScale =
   [
     {key: 'Day',   value: 'day'},
@@ -17,19 +20,19 @@ export class TimeScaleComponent implements OnInit {
 
   @Input() sensorData =
   [
-    { key: 'Temp F', value: 'tempf'},
-    { key: 'Temp C', value: 'tempc'},
-    { key: 'Dewpoint F', value: 'dewptf' },
-    { key: 'Dewpoint C', value: 'dewptc' },
-    { key: 'Humidity %RH', value: 'humidity'},
-    { key: 'Pressure Pa', value: 'pressure'},
+    { key: 'Temperature (°F)', value: 'tempf'},
+    { key: 'Temperature (°C)', value: 'tempc'},
+    { key: 'Dewpoint (°F)', value: 'dewptf' },
+    { key: 'Dewpoint (°C)', value: 'dewptc' },
+    { key: 'Humidity (%RH)', value: 'humidity'},
+    { key: 'Pressure (Pa)', value: 'pressure'},
     { key: 'Battery', value: 'battery' }
   ];
 
   @Output() select: EventEmitter<any> = new EventEmitter<any>();
 
   /* Initialize variables */
-  timeScaleTitle = 'Time Scale';
+  timeScaleTitle: string = 'Time Scale';
   now: Date;
   scale: string;
   sensor: string;
@@ -38,7 +41,7 @@ export class TimeScaleComponent implements OnInit {
   ngOnInit() {
 
     // Set default values to scale and sensor on Initialization
-    this.scale = this.setTimeScaleValues('day');
+    this.scale = this.setTimeScaleValues('month');
     this.sensor = this.sensorData[0].value;
     this.sensorLabel = this.sensorData[0].key;
 
@@ -77,7 +80,7 @@ export class TimeScaleComponent implements OnInit {
   selectTimeScale(timeScaleValue: string) {
     this.scale = this.setTimeScaleValues(timeScaleValue);
     this.emitValues(this.sensor, this.scale, this.sensorLabel);
-    //console.log(this.scale);
+    console.log(this.scale);
   }
 
   // Function called when Time Scale button is selected
