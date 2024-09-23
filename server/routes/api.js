@@ -2,7 +2,7 @@
  * Author: Jeremy Barr
  * Date Created: 16-Aug-2024
  * Description: MEAN Stack Server API to access Weather Database data.
- * Version: 3.0
+ * Version: 3.1
 */
 
 const express = require('express');
@@ -12,7 +12,6 @@ const mongoose = require('mongoose');
 // require WeatherSchema
 const Weather = require('../models/weather-schema');
 
-//const API = 'mongodb://localhost:27017/weatherdb';
 const API = 'mongodb://localhost:27017/weatherdb';
 mongoose.connect(API)   
   .then(()=>{
@@ -94,9 +93,13 @@ router.post('/weather', async (req, res) => {
     req.body.dewptf = dewPoint * 9 / 5.0 + 32;
     req.body.dewptf = req.body.dewptf.toFixed(4);
 
-    Weather.create(req.body, (err) => {
-      if (err) return handleError(err)
-    })
+    Weather.create(req.body)
+      .then(() => {
+        console.log('weather data added');
+      })
+      .catch(err => {
+        console.error(err);
+      });
 
     res.json(req.body);
   } catch (err) {
@@ -160,7 +163,6 @@ router.get('/weather/:sensor/:timeScale', async (req, res) => {
     // Limit to number of results and '+' converts string to number.
     // Sorts the results by the 'timestamp' key in decending order
     ).sort('-timestamp')
-  
     // send response in json format.
     res.json(sensorData);
   } catch (err) {

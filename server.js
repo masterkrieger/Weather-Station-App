@@ -3,6 +3,8 @@
  * Date Created: 09-Aug-2024
  * Description: MEAN Stack Server  to route to '/api' and '*' to all other routes (Anguar routes).
  * Version: 2.0
+ * TODO: 
+ *   - Add .env file for environment variables (https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs
 */
 
 // Get dependencies

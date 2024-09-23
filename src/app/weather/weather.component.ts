@@ -10,7 +10,7 @@ import { WeatherService } from '../weather.service';
 import { TimeScaleComponent } from '../time-scale/time-scale.component';
 
 @Component({
-  selector: 'app-weather',
+  selector: 'weather-chart',
   standalone: true,
   imports: [NgxEchartsModule, TimeScaleComponent, NgFor, NgIf],
   templateUrl: './weather.component.html',

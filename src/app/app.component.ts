@@ -2,7 +2,8 @@
 * TODO: 
 * - Add dashboard component
 * -- include current weather data (like WeatherUnderground)
-* -- include historical weather data as hart
+* -- include historical weather data as a chart
+* - Add .env file for environment variables (https://medium.com/@desinaoluseun/using-env-to-store-environment-variables-in-angular-20c15c7c0e6a)
 */
 
 import { Component } from '@angular/core';
