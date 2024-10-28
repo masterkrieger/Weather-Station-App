@@ -12,7 +12,6 @@ const mongoose = require('mongoose');
 // require WeatherSchema
 const Weather = require('../models/weather-schema');
 
-//const API = 'mongodb://localhost:27017/weatherdb';
 const API = 'mongodb://localhost:27017/weatherdb';
 mongoose.connect(API)   
   .then(()=>{

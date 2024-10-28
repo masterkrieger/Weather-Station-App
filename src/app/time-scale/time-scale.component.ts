@@ -21,9 +21,9 @@ export class TimeScaleComponent implements OnInit {
   @Input() sensorData =
   [
     { key: 'Temperature (°F)', value: 'tempf'},
-    { key: 'Temperature (°C)', value: 'tempc'},
+    //{ key: 'Temperature (°C)', value: 'tempc'},
     { key: 'Dewpoint (°F)', value: 'dewptf' },
-    { key: 'Dewpoint (°C)', value: 'dewptc' },
+    //{ key: 'Dewpoint (°C)', value: 'dewptc' },
     { key: 'Humidity (%RH)', value: 'humidity'},
     { key: 'Pressure (Pa)', value: 'pressure'},
     { key: 'Battery', value: 'battery' }
@@ -41,7 +41,7 @@ export class TimeScaleComponent implements OnInit {
   ngOnInit() {
 
     // Set default values to scale and sensor on Initialization
-    this.scale = this.setTimeScaleValues('month');
+    this.scale = this.setTimeScaleValues('day');
     this.sensor = this.sensorData[0].value;
     this.sensorLabel = this.sensorData[0].key;
 
