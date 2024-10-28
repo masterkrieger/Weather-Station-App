@@ -149,7 +149,7 @@ export class WeatherComponent implements OnInit, OnDestroy {
 
     data.forEach(item => {
       const { station_id, timestamp, tempf, dewptf } = item;
-      const value = parseFloat(item[sensorValue]); // Dynamically handle any sensor type
+      const value = parseFloat(parseFloat(item[sensorValue]).toFixed(2)); // Dynamically handle any sensor type
   
       if (!processedData[station_id]) {
         processedData[station_id] = {};

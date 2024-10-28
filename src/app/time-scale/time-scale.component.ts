@@ -21,9 +21,9 @@ export class TimeScaleComponent implements OnInit {
   @Input() sensorData =
   [
     { key: 'Temperature (°F)', value: 'tempf'},
-    { key: 'Temperature (°C)', value: 'tempc'},
+    //{ key: 'Temperature (°C)', value: 'tempc'},
     { key: 'Dewpoint (°F)', value: 'dewptf' },
-    { key: 'Dewpoint (°C)', value: 'dewptc' },
+    //{ key: 'Dewpoint (°C)', value: 'dewptc' },
     { key: 'Humidity (%RH)', value: 'humidity'},
     { key: 'Pressure (Pa)', value: 'pressure'},
     { key: 'Battery', value: 'battery' }
