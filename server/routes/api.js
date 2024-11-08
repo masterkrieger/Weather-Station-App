@@ -93,10 +93,10 @@ router.post('/weather', async (req, res) => {
     req.body.dewptf = dewPoint * 9 / 5.0 + 32;
     req.body.dewptf = req.body.dewptf.toFixed(4);
 
-    Weather.create(req.body, (err) => {
-      if (err) return handleError(err)
-    })
+    // Save the data to the database
+    await Weather.create(req.body);  // Await the promise here
 
+    // Respond with the posted data
     res.json(req.body);
   } catch (err) {
     console.error(err);
