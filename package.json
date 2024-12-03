@@ -26,7 +26,7 @@
     "@angular/platform-browser-dynamic": "^18.1.0",
     "@angular/router": "^18.1.0",
     "echarts": "^5.5.1",
-    "mongoose": "^8.5.2",
+    "mongoose": "^8.8.3",
     "ngx-echarts": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
